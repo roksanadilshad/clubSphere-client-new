@@ -18,6 +18,11 @@ const Header = () => {
     <li><NavLink to='/profile'>About us</NavLink></li>
     <li><NavLink to='/profile'>Contact us</NavLink></li>
     </>
+    const dropdown = <>
+    <li><NavLink to='/profile'>Profile</NavLink></li>
+    <li><NavLink to='/profile'>Dashboard</NavLink></li>
+    </>
+
     return (
         <div className="sticky bg-info lg:px-20 mx-auto navbar shadow-sm">
   <div className="navbar-start">
@@ -46,8 +51,13 @@ const Header = () => {
     {
         user ? 
         (<>
-        <a href='/profile' className=""><img src={user?.photoURL || 'https://images.unsplash.com/photo-1747592771443-e15f155b1faf?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyN3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=60&w=500'} className='lg:w-12 lg:h-12 w-10 h-10 rounded-full' title={user.displayName} /></a>
-        <button onClick={handleSignout} className='btn btn-success border-[#B4C408] text-white ml-2'>Log Out</button>
+        <div className="dropdown dropdown-end">
+  <img tabIndex={0} role="button" src={user?.photoURL || 'https://images.unsplash.com/photo-1747592771443-e15f155b1faf?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyN3x8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=60&w=500'} className='lg:w-12 lg:h-12 w-10 h-10 rounded-full' title={user.displayName} />
+  <ul tabIndex="-1" className="dropdown-content menu bg-secondary rounded-box z-1 w-52 p-2 shadow-sm">
+    {dropdown}
+     <button onClick={handleSignout} className='btn btn-primary  text-white ml-2'>Log Out</button>
+  </ul>
+</div>
         </>) : (<>
          <NavLink className='btn text-white btn-primary  mr-1 ' to='/register'>Register</NavLink>
        <NavLink className='btn shadow mr-1 btn-warning text-white' to='/login'>Login</NavLink>

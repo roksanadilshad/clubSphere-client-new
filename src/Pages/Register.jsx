@@ -1,165 +1,243 @@
-import React, { use, useState } from 'react';
-
-import { Link, Navigate, useNavigate } from 'react-router';
-import { AuthContext } from '../Context/AuthContext';
-import { LuEyeClosed } from 'react-icons/lu';
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router";
+import { AuthContext } from "../Context/AuthContext";
+import { LuEyeClosed } from "react-icons/lu";
+import { FaEye } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import { FcGoogle } from "react-icons/fc";
+import toast from "react-hot-toast";
+import { imageUpload } from "../utils";
 
 const Registration = () => {
-     const {createUser, setUser, signInWithGoogle, updateUserProfile} = use(AuthContext);
-     const [nameError, setNameError] = useState('');
-     const [success, setSuccess] = useState(false);
-     const [error, setError] = useState('');
-  const [showPass, setShoePass] = useState(false)
-const navigate = useNavigate();
-  const from = location.state?.from?.pathname || '/';
+  const {
+    createUser,
+    setUser,
+    signInWithGoogle,
+    updateUserProfile,
+    loading,
+  } = useContext(AuthContext);
 
-    const handleSubmit = (e) =>{
-        e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        const name = e.target.name.value;
-        const photo = e.target.photo.value;
-        const terms = e.target.terms.checked
-        //console.log(email, password);
+  const [nameError, setNameError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [showPass, setShowPass] = useState(false);
 
-        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+[\]{};':"\\|,.<>/?`~\-]).{6,}$/;
+  const navigate = useNavigate();
+  const from = location.state?.from?.pathname || "/";
 
-         if(!passwordPattern.test(password)){
-          setError('Passowerd must be contain at least 6 characters long, include one uppercase, one lowercase and special character')
-          //toast.error('Passowerd must be contain at least 6 characters long, include one uppercase, one lowercase and special character')
-          return
-         }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-        if(name.length < 5){
-            setNameError('Name Should be more then 5 character');
-            return;
-        }
-        else{
-            setNameError('')
-        };
-        
-        setError(null);
-         setSuccess(false);
+  const onSubmit = async (data) => {
+    const { name, image, email, password, terms } = data;
 
-         if(!terms){
-          //toast.error('Please accept our terms and condition.');
-          return;
-         }
+    if (!terms) {
+      setError("You must accept terms & conditions");
+      return;
+    }
 
-        createUser(email, password, terms)
-        .then(result =>{
-          const user = result.user;
-          setSuccess(true)
-          e.target.reset()
-            //console.log(result.user);
-             return updateUserProfile()
-        .then(() => {
-          setUser({ ...user, displayName: name, photoURL: photo });
-          setSuccess(true);
-          setError('');
-          e.target.reset();
-          //toast.success("Sign up successfull")
-           navigate(from, {replace:true});
-        });
+    // Validate password
+    const passwordPattern =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-[\]{};':"\\|,.<>/?`~]).{6,}$/;
+
+    if (!passwordPattern.test(password)) {
+      setError(
+        "Password must contain at least 6 characters, 1 uppercase, 1 lowercase, and 1 special character."
+      );
+      return;
+    }
+
+    if (name.length < 5) {
+      setNameError("Name should contain at least 5 characters");
+      return;
+    }
+    setNameError("");
+
+    setError("");
+    setSuccess(false);
+
+    try {
+      // 1. Upload image
+      const uploadedImage = image[0];
+      const imageURL = await imageUpload(uploadedImage);
+
+      // 2. Create User
+      const result = await createUser(email, password);
+
+      // 3. Update Profile
+      await updateUserProfile(name, imageURL);
+
+      setUser({ ...result.user, displayName: name, photoURL: imageURL });
+
+      setSuccess(true);
+
+      toast.success("Signup Successful");
+
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
+    }
+  };
+
+  const handlePasswordShow = (e) => {
+    e.preventDefault();
+    setShowPass(!showPass);
+  };
+
+  const handleGoogleSignIn = () => {
+    signInWithGoogle()
+      .then(() => {
+        toast.success("Google Login Successful");
+        navigate(from, { replace: true });
       })
-         .catch((error) => {
-            console.log(error);
-            setError(error.message);
-            setSuccess(false)
-          });
-    }
+      .catch((err) => {
+        toast.error(err.message);
+      });
+  };
 
-    const handlePasswordShow = e =>{
-      e.preventDefault();
-      setShoePass(!showPass)
-    }
-        const handleGoogleSignIn = () =>{
-         signInWithGoogle()
-         .then(() => {
-          //toast.success("Sign up successfull")
-            //console.log(result.user);
-            navigate(from, {replace:true})
-            
-         })
-         .catch(err => {
-            console.log(err);
-            //toast.error(err.message)
-         })
-    }
-    
-   
-    return (
-      <div>
-       <div><title>WarmPaws Register</title></div>
-        <div className="hero base-200 min-h-screen">
-  <div className="hero-content flex-col">
-    <div className="text-center">
-      <h1 className="text-5xl font-bold">Registration now!</h1>
-      <p className="py-6">
-        Welcome ! Sign up to keep your pets warm, safe, and stylish this winter.
-      </p>
-    </div>
-    <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-      <div className="card-body">
-        <form onSubmit={handleSubmit}>
-        <fieldset className="fieldset ">
-             <label className="label">Name</label>
-            <input
-              name="name"
-              type="text"
-              className="input"
-              placeholder="Name"
-              required
-            />
+  return (
+    <div className="hero base-200 min-h-screen">
+      <div className="hero-content flex-col">
+        <div className="text-center">
+          <h1 className="text-5xl font-bold">Register Now!</h1>
+          <p className="py-6">
+            Welcome! Sign up to keep your pets warm, safe & stylish.
+          </p>
+        </div>
 
-            {nameError && <p className="text-xs text-error">{nameError}</p>}
+        <div className="card bg-base-100 w-full max-w-sm shadow-2xl">
+          <div className="card-body">
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <fieldset className="fieldset">
+                {/* Name */}
+                <label className="label">Name</label>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Name"
+                  {...register("name", {
+                    required: true,
+                    maxLength: {
+                      value: 20,
+                      message: "Name cannot be too long",
+                    },
+                  })}
+                />
+                {errors.name && (
+                  <p className="text-red-500">{errors.name.message}</p>
+                )}
+                {nameError && <p className="text-red-500">{nameError}</p>}
 
-            {/* Photo URl  */}
-            <label className="label">Photo URl </label>
-            <input
-              name="photo"
-              type="text"
-              className="input"
-              placeholder="Photo URl"
-              required
-            />
+                {/* Image */}
+                <label className="label">Profile Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="input border p-2"
+                  {...register("image", {
+                    required: "Profile picture is required",
+                  })}
+                />
+                {errors.image && (
+                  <p className="text-red-500">{errors.image.message}</p>
+                )}
 
-          <label className="label">Email</label>
-          <input name='email' type="email" className="input" placeholder="Email" />
-          <label className="label">Password</label>
-         <div className='relative'>
-          <input name='password' type={showPass ? 'text' : "password"} className="input" placeholder="Password" />
-          <button onClick={handlePasswordShow} className='text-2xl top-2 text-center absolute z-10 right-5'>{showPass ? <FaEye></FaEye> : <LuEyeClosed></LuEyeClosed>}</button>
+                {/* Email */}
+                <label className="label">Email</label>
+                <input
+                  type="email"
+                  className="input"
+                  placeholder="Email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value:
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/,
+                      message: "Enter a valid email",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email.message}</p>
+                )}
+
+                {/* Password */}
+                <label className="label">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPass ? "text" : "password"}
+                    className="input w-full"
+                    placeholder="Password"
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 6,
+                        message: "Minimum 6 characters",
+                      },
+                    })}
+                  />
+                  <button
+                    onClick={handlePasswordShow}
+                    className="text-2xl absolute top-2 right-4"
+                  >
+                    {showPass ? <FaEye /> : <LuEyeClosed />}
+                  </button>
+                </div>
+
+                {errors.password && (
+                  <p className="text-red-500">{errors.password.message}</p>
+                )}
+
+                {/* Terms */}
+                <label className="label flex gap-2">
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    {...register("terms", { required: true })}
+                  />
+                  Accept our terms and conditions
+                </label>
+
+                {/* Error and Success */}
+                {success && (
+                  <p className="text-green-500">
+                    Account Created Successfully!
+                  </p>
+                )}
+
+                {error && <p className="text-red-500">{error}</p>}
+
+                {/* Register Button */}
+                <button type="submit" className="btn btn-success text-white">
+                  Register
+                </button>
+
+                {/* Google */}
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  className="btn bg-white border mt-2"
+                >
+                  <FcGoogle /> Login with Google
+                </button>
+
+                <p className="mt-2">
+                  Already have an account?{" "}
+                  <Link className="text-amber-700" to="/login">
+                    Sign in
+                  </Link>
+                </p>
+              </fieldset>
+            </form>
           </div>
-         <div>
-            <label className="label">
-         <input name='terms' type="checkbox" className="checkbox" />
-        Accept our terms and condition
-        </label>
-           </div>
-
-          {
-            success && <p className='text-green-500'>Account Crteated Sussessfully</p>
-          }
-           {
-          error && <p className='text-red-500'>{error.message}! provide a valid email or passowerd</p>  
-        }
-          <button className="btn btn-success text-white mt-4">Register</button>
-
-          <button type='button' onClick={handleGoogleSignIn} className="btn bg-white text-black border-[#e5e5e5]">
-  <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
-  Login with Google
-</button>
-
-          <p>Already have an account ? Please <Link className='text-amber-700' to='/login'>Sign in</Link></p>
-        </fieldset>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
-    </div>
-      </div>
-    );
+  );
 };
 
 export default Registration;
