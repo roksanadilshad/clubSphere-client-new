@@ -10,9 +10,9 @@
   --color-warning: #FFCBCB;
 
 }
-body{
+/* body{
     background-color: #FFFDDE;
-}
+} */
 
 .active{
     border-bottom: 1px solid #D9D7F1;

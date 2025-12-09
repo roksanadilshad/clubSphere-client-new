@@ -178,7 +178,7 @@ const Header = () => {
             </nav>
 
             {/* Mobile Auth Section */}
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="mt-4 z-40 pt-4 border-t border-gray-200">
               {user ? (
                 <div>
                   <div className="flex items-center gap-3 px-4 py-3 mb-2">

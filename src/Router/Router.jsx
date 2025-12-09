@@ -17,6 +17,9 @@ import MyEvents from '../Pages/Dashboard/Member/MyEvents';
 import PaymentHistory from '../Pages/Dashboard/Member/PaymentHistory';
 import EditClub from '../Pages/Dashboard/Manager/EditClub';
 import Profile from '../Pages/Dashboard/Profile';
+import AdminOverview from '../Pages/Dashboard/Admin/AdminOverview';
+import Clubs from '../Pages/Clubs/Clubs';
+import ClubDetails from '../Pages/Clubs/ClubDetails';
 
 export const router = createBrowserRouter([
   {
@@ -38,15 +41,20 @@ export const router = createBrowserRouter([
          element:<Login></Login>
         },
         {
+          path:'/clubs' ,
+         element:<Clubs></Clubs>
+        },
+        {
+          path:'/clubDetail/:id' ,
+         element:<ClubDetails></ClubDetails>
+        },
+        {
   path: '/dashboard',
   element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
   children: [
     {
       index: true,
-      element: <PrivateRoute><MemberOverview /></PrivateRoute>
-    },
-    {
-      path: 'member',
+      // path: "member",
       element: <PrivateRoute><MemberOverview /></PrivateRoute>
     },
     {
@@ -80,6 +88,7 @@ export const router = createBrowserRouter([
     },
     {
       path: 'manager',
+      index: true,
       element: <PrivateRoute><ManagerOverview /></PrivateRoute>
     },
     {
@@ -88,7 +97,8 @@ export const router = createBrowserRouter([
     },
     {
       path: 'admin',
-      element: <PrivateRoute><MyClubs /></PrivateRoute>
+      index: true,
+      element: <PrivateRoute><AdminOverview></AdminOverview></PrivateRoute>
     },
     {
       path: 'admin/users',
@@ -107,8 +117,11 @@ export const router = createBrowserRouter([
       element: <PrivateRoute><Profile></Profile></PrivateRoute>
     },
   ]
-}
-       
+},
+  {
+      path: 'profile',
+      element: <PrivateRoute><Profile></Profile></PrivateRoute>
+    },  
     ]
   },
 ]);

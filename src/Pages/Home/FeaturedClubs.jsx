@@ -2,15 +2,30 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { FaUsers, FaChevronRight } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const FeaturedClubs = () => {
+  // const [clubs, setClubs] = useState([]);
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(()=>{
+  //   axios.get('http://localhost:3000/featuredClubs')
+  //   .then((res)=>{
+  //     setClubs(res.data)
+  //     setLoading(false)
+  //   }).catch (err =>{
+  //     console.log(err);
+      
+  //   })
+  // },[])
   // Fetch featured clubs with TanStack Query
   const { data: featuredClubs, isLoading } = useQuery({
     queryKey: ["featuredClubs"],
     queryFn: async () => {
-      const response = await fetch("/api/clubs/featured?limit=6");
-      if (!response.ok) throw new Error("Failed to fetch clubs");
-      return response.json();
+      const response = await axios("http://localhost:3000/featuredClubs");
+      // if (!response.ok) throw new Error("Failed to fetch clubs");
+      return response.data;
     },
   });
 
@@ -56,7 +71,7 @@ const FeaturedClubs = () => {
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
               <div
                 key={i}
                 className="bg-white rounded-lg border border-gray-200 overflow-hidden animate-pulse"
@@ -76,7 +91,7 @@ const FeaturedClubs = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
           >
             {featuredClubs?.map((club) => (
               <motion.div
