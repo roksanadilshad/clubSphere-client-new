@@ -3,7 +3,7 @@ import { FaMapMarkerAlt, FaUsers, FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Club = ({ club }) => {
-  console.log(club);
+  // console.log(club);
 
   return (
     <motion.div

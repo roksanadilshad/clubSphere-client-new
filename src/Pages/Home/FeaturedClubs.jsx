@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { FaUsers, FaChevronRight } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Club from "../Clubs/Club";
 
 const FeaturedClubs = () => {
   // const [clubs, setClubs] = useState([]);
@@ -94,48 +95,49 @@ const FeaturedClubs = () => {
             className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
           >
             {featuredClubs?.map((club) => (
-              <motion.div
-                key={club.id}
-                variants={itemVariants}
-                className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300"
-              >
-                <Link to={`/clubs/${club.id}`}>
-                  <div className="relative h-48 bg-[#D9D7F1] overflow-hidden">
-                    {club.image ? (
-                      <img
-                        src={club.image}
-                        alt={club.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <FaUsers className="text-5xl text-gray-400" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700">
-                      {club.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {club.description}
-                    </p>
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-4 text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <FaUsers className="text-xs" />
-                          {club.memberCount} members
-                        </span>
-                        {club.category && (
-                          <span className="px-2 py-1 bg-[#E7FBBE] text-gray-700 rounded text-xs font-medium">
-                            {club.category}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+              <Club club={club} key={club._id}></Club>
+              // <motion.div
+              //   key={club.id}
+              //   variants={itemVariants}
+              //   className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              // >
+              //   {/* <Link to={`/clubs/${club.id}`}>
+              //     <div className="relative h-48 bg-[#D9D7F1] overflow-hidden">
+              //       {club.image ? (
+              //         <img
+              //           src={club.image}
+              //           alt={club.name}
+              //           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              //         />
+              //       ) : (
+              //         <div className="w-full h-full flex items-center justify-center">
+              //           <FaUsers className="text-5xl text-gray-400" />
+              //         </div>
+              //       )}
+              //     </div>
+              //     <div className="p-5">
+              //       <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-700">
+              //         {club.name}
+              //       </h3>
+              //       <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+              //         {club.description}
+              //       </p>
+              //       <div className="flex items-center justify-between text-sm">
+              //         <div className="flex items-center gap-4 text-gray-500">
+              //           <span className="flex items-center gap-1">
+              //             <FaUsers className="text-xs" />
+              //             {club.memberCount} members
+              //           </span>
+              //           {club.category && (
+              //             <span className="px-2 py-1 bg-[#E7FBBE] text-gray-700 rounded text-xs font-medium">
+              //               {club.category}
+              //             </span>
+              //           )}
+              //         </div>
+              //       </div>
+              //     </div>
+              //   </Link> */}
+              // </motion.div>
             ))}
           </motion.div>
         )}
