@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { auth } from "../firebase/firebase.init";
 import { AuthContext } from "./AuthContext";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import { saveUser } from "../api/saveUser";
 
 
 const googleProvider = new GoogleAuthProvider();
@@ -31,16 +32,22 @@ const AuthProvider = ({children}) => {
         setLoading(true)
          return sendPasswordResetEmail(auth, email);
     };
-    const updateUserProfile = (name, photoURL) =>{
-        return updateProfile(user, {
+    const updateUserProfile = async (name, photoURL) =>{
+        await updateProfile(auth.currentUser, {
           displayName: name,
           photoURL: photoURL,
         })
+         // optional: reload user to ensure profile is updated
+  await auth.currentUser.reload();
+  // update local state
+  setUser(auth.currentUser);
     }
 
     useEffect(()=>{
-            const unsubscribe = onAuthStateChanged(auth, (currentUser)=>{
+            const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
         setUser(currentUser);
+
+        
         setLoading(false);
       });
        return () =>{

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router';
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -443,9 +442,9 @@ const ClubDetails = () => {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleJoinClub}
-                    className="px-10 py-4 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 text-white font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border border-white/20 backdrop-blur-sm relative overflow-hidden group"
+                    className="px-10 py-4 bg-primary text-white font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border border-white/20 backdrop-blur-sm relative overflow-hidden group"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-info  to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="relative flex items-center gap-3">
                       <FaRocket className="text-lg" />
                       <span className="text-lg">Join Club Now</span>
