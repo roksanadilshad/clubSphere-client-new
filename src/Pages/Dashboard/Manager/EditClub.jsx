@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { FaUpload, FaSave, FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
-import axios from "axios";
 import { imageUpload } from "../../../utils"; // your utility to upload images
 import axiosSecure from "../../../api/axiosSecure";
 
@@ -79,7 +78,7 @@ const { data: club, isLoading } = useQuery({
         updatedAt: new Date(),
       };
 
-      const res = await axios.put(`/api/clubs/${clubId}`, payload);
+      const res = await axiosSecure.patch(`/clubs/${clubId}`, payload);
       return res.data;
     },
     onSuccess: () => {

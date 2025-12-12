@@ -1,53 +1,52 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { useState } from "react";
-import { FaSearch, FaEnvelope, FaCalendar, FaBan } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaSearch, FaEnvelope, FaBan } from "react-icons/fa";
 import toast from "react-hot-toast";
+import axiosSecure from "../../../api/axiosSecure";
+import { getAuth } from "firebase/auth";
 
 const ManageMembers = () => {
-  const { clubId } = useParams();
+  const [members, setMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
 
-  // Fetch club members
-  const { data: members, isLoading } = useQuery({
-    queryKey: ["clubMembers", clubId],
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const managerEmail = user?.email;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["managerMembers"],
     queryFn: async () => {
-      const response = await fetch(`/api/clubs/${clubId}/members`);
-      if (!response.ok) throw new Error("Failed to fetch members");
-      return response.json();
+      const res = await axiosSecure.get(`/manager/members?managerEmail=${managerEmail}`);
+      return res.data;
     },
+    enabled: !!managerEmail,
   });
+
+  useEffect(() => {
+    if (data) setMembers(data);
+  }, [data]);
 
   // Expire membership mutation
   const expireMembershipMutation = useMutation({
     mutationFn: async (membershipId) => {
-      const response = await fetch(`/api/memberships/${membershipId}/expire`, {
-        method: "PATCH",
-      });
-      if (!response.ok) throw new Error("Failed to expire membership");
-      return response.json();
+      const res = await axiosSecure.patch(`/memberships/${membershipId}/expire`);
+      return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["clubMembers", clubId]);
+      queryClient.invalidateQueries(["managerMembers"]);
       toast.success("Membership expired successfully");
     },
-    onError: () => {
-      toast.error("Failed to expire membership");
-    },
+    onError: () => toast.error("Failed to expire membership"),
   });
 
   const handleExpireMembership = (membershipId, memberName) => {
-    if (
-      window.confirm(
-        `Are you sure you want to expire ${memberName}'s membership?`
-      )
-    ) {
+    if (window.confirm(`Are you sure you want to expire ${memberName}'s membership?`)) {
       expireMembershipMutation.mutate(membershipId);
     }
   };
 
-  const filteredMembers = members?.filter(
+  const filteredMembers = members.filter(
     (member) =>
       member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -66,9 +65,7 @@ const ManageMembers = () => {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Club Members</h1>
-        <p className="text-gray-600">
-          Manage members for {members?.[0]?.clubName || "your club"}
-        </p>
+        <p className="text-gray-600">Manage members for your clubs</p>
       </div>
 
       {/* Stats */}
@@ -113,28 +110,17 @@ const ManageMembers = () => {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Member
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Email
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Joined
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Expires
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Actions
-                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Member</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Email</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Club</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Joined</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Expires</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredMembers?.map((member) => (
+              {filteredMembers.map((member) => (
                 <tr key={member.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -152,6 +138,7 @@ const ManageMembers = () => {
                       {member.email}
                     </div>
                   </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{member.clubName}</td>
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
@@ -167,7 +154,7 @@ const ManageMembers = () => {
                     {new Date(member.joinedAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
-                    {new Date(member.expiryDate).toLocaleDateString()}
+                    {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString() : "-"}
                   </td>
                   <td className="px-6 py-4">
                     {member.status === "active" && (
