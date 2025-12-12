@@ -44,10 +44,10 @@ const ManageEvents = () => {
     onError: () => toast.error("Failed to delete event"),
   });
 
-  const handleDeleteEvent = (eventId, eventTitle) => {
-    if (window.confirm(`Are you sure you want to delete "${eventTitle}"?`)) {
+  const handleDeleteEvent = (eventId) => {
+    // if (toast.confirm(`Are you sure you want to delete "${eventTitle}"?`)) {
       deleteEventMutation.mutate(eventId);
-    }
+    //}
   };
 
   if (isLoading) {
@@ -57,7 +57,7 @@ const ManageEvents = () => {
       </div>
     );
   }
-console.log(events);
+//console.log(events);
 
   return (
     <div>
@@ -109,7 +109,7 @@ console.log(events);
                   </div>
                   <div className="flex gap-2">
                     <Link
-                      to={`/dashboard/manager/events/${event._id}/edit`}
+                      to={`/dashboard/manager/editEvent/${event._id}`}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                     >
                       <FaEdit />

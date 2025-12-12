@@ -27,6 +27,7 @@ import Unauthorized from '../Pages/Unauthorized';
 import CreateClub from '../Pages/CreateAClub';
 import ManageMyClubs from '../Pages/Dashboard/Manager/MyClubs';
 import CreateEvent from '../Pages/Dashboard/Manager/CreateEvent';
+import EditEvent from '../Pages/Dashboard/Manager/EditEvent';
 
 export const router = createBrowserRouter([
   {
@@ -99,6 +100,10 @@ export const router = createBrowserRouter([
     {
       path: 'manager/events/create',
       element: <PrivateRoute allowedRoles={["clubManager"]}><CreateEvent/></PrivateRoute>
+    },
+    {
+      path: 'manager/editEvent/:eventId',
+      element: <PrivateRoute allowedRoles={["clubManager"]}><EditEvent/></PrivateRoute>
     },
     {
       path: 'manager/editClub/:clubId',
