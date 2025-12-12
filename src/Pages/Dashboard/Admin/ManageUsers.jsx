@@ -2,48 +2,46 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { FaSearch, FaUserShield, FaUser } from "react-icons/fa";
 import toast from "react-hot-toast";
+import axiosSecure from "../../../api/axiosSecure";
+ // <-- your axios instance
 
 const ManageUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
 
   // Fetch users
-  const { data: users, isLoading } = useQuery({
+  const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/users");
-      if (!response.ok) throw new Error("Failed to fetch users");
-      return response.json();
+      const res = await axiosSecure.get("/users");
+      return res.data;
     },
   });
 
-  // Change user role mutation
+  // Change user role
   const changeRoleMutation = useMutation({
-    mutationFn: async ({ userId, newRole }) => {
-      const response = await fetch(`/api/admin/users/${userId}/role`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: newRole }),
+    mutationFn: async ({ email, newRole }) => {
+      const res = await axiosSecure.patch(`/users/role/${email}`, {
+        role: newRole,
       });
-      if (!response.ok) throw new Error("Failed to change role");
-      return response.json();
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
-      toast.success("User role updated successfully");
+      toast.success("Role updated successfully");
     },
     onError: () => {
-      toast.error("Failed to update user role");
+      toast.error("Failed to update role");
     },
   });
 
-  const handleRoleChange = (userId, newRole) => {
-    if (window.confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
-      changeRoleMutation.mutate({ userId, newRole });
+  const handleRoleChange = (email, newRole) => {
+    if (window.confirm(`Change role to ${newRole}?`)) {
+      changeRoleMutation.mutate({ email, newRole });
     }
   };
 
-  const filteredUsers = users?.filter(
+  const filteredUsers = users.filter(
     (user) =>
       user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -85,40 +83,33 @@ const ManageUsers = () => {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  User
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Email
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Role
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Joined
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Actions
-                </th>
+                <th className="px-6 py-4">User</th>
+                <th className="px-6 py-4">Email</th>
+                <th className="px-6 py-4">Role</th>
+                <th className="px-6 py-4">Joined</th>
+                <th className="px-6 py-4">Actions</th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-gray-200">
-              {filteredUsers?.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
+              {filteredUsers.map((user) => (
+                <tr key={user._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <img
                         src={user.photoURL || "https://via.placeholder.com/40"}
-                        alt={user.name}
+                        alt=""
                         className="w-10 h-10 rounded-full object-cover"
                       />
-                      <span className="font-medium text-gray-900">{user.name}</span>
+                      <span className="font-medium">{user.name}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
+
+                  <td className="px-6 py-4">{user.email}</td>
+
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         user.role === "admin"
                           ? "bg-red-100 text-red-700"
                           : user.role === "clubManager"
@@ -126,19 +117,21 @@ const ManageUsers = () => {
                           : "bg-gray-100 text-gray-700"
                       }`}
                     >
-                      {user.role === "admin" && <FaUserShield />}
-                      {user.role === "clubManager" && <FaUser />}
-                      <span className="capitalize">{user.role}</span>
+                      {user.role}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
+
+                  <td className="px-6 py-4">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </td>
+
                   <td className="px-6 py-4">
                     <select
                       value={user.role}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                      className="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      onChange={(e) =>
+                        handleRoleChange(user.email, e.target.value)
+                      }
+                      className="px-3 py-1 border rounded-lg"
                     >
                       <option value="member">Member</option>
                       <option value="clubManager">Club Manager</option>

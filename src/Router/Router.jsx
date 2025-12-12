@@ -20,6 +20,11 @@ import Profile from '../Pages/Dashboard/Profile';
 import AdminOverview from '../Pages/Dashboard/Admin/AdminOverview';
 import Clubs from '../Pages/Clubs/Clubs';
 import ClubDetails from '../Pages/Clubs/ClubDetails';
+import ViewPayments from '../Pages/Dashboard/Admin/ViewPaments';
+import EventRegistrations from '../Pages/Dashboard/Manager/EventRegistrations';
+import ManageUsers from '../Pages/Dashboard/Admin/ManageUsers';
+import Unauthorized from '../Pages/Unauthorized';
+import CreateClub from '../Pages/CreateAClub';
 
 export const router = createBrowserRouter([
   {
@@ -49,79 +54,88 @@ export const router = createBrowserRouter([
          element:<ClubDetails></ClubDetails>
         },
         {
+          path:'/create-club' ,
+         element:<CreateClub></CreateClub>
+        },
+        {
   path: '/dashboard',
   element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
+  errorElement: <ErrorPage></ErrorPage>,
   children: [
     {
-      index: true,
-      // path: "member",
-      element: <PrivateRoute><MemberOverview /></PrivateRoute>
+      path: "member",
+      element: <PrivateRoute allowedRoles={["member"]}><MemberOverview /></PrivateRoute>
     },
     {
       path: 'member/clubs',
-      element: <PrivateRoute><MyClubs /></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["member"]}><MyClubs /></PrivateRoute>
     },
     {
       path: 'member/events',
-      element: <PrivateRoute><MyEvents></MyEvents></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["member"]}><MyEvents></MyEvents></PrivateRoute>
     },
     {
       path: 'member/payments',
-      element: <PrivateRoute><PaymentHistory></PaymentHistory></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["member"]}><PaymentHistory></PaymentHistory></PrivateRoute>
     },
-    {
-      path: 'member/clubs',
-      element: <PrivateRoute><MyClubs /></PrivateRoute>
-    },
-
+    
     {
       path: 'manager/clubs',
-      element: <PrivateRoute><ManageClubs></ManageClubs></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["clubManager"]}><MyClubs></MyClubs></PrivateRoute>
     },
     {
       path: 'manager/members',
-      element: <PrivateRoute><ManageMembers></ManageMembers></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["clubManager"]}><ManageMembers></ManageMembers></PrivateRoute>
     },
     {
       path: 'manager/events',
-      element: <PrivateRoute><ManageEvents></ManageEvents></PrivateRoute>
-    },
-    {
-      path: 'manager',
-      index: true,
-      element: <PrivateRoute><ManagerOverview /></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["clubManager"]}><ManageEvents></ManageEvents></PrivateRoute>
     },
     {
       path: 'manager/editClub',
-      element: <PrivateRoute><EditClub></EditClub></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["clubManager"]}><EditClub/></PrivateRoute>
+    },
+    {
+      path: 'manager/eventRegistrations',
+      element: <PrivateRoute allowedRoles={["clubManager"]}><EventRegistrations></EventRegistrations></PrivateRoute>
+    },
+    {
+      path: 'manager',
+      // index: true,
+      element: <PrivateRoute allowedRoles={["clubManager"]}><ManagerOverview /></PrivateRoute>
     },
     {
       path: 'admin',
-      index: true,
-      element: <PrivateRoute><AdminOverview></AdminOverview></PrivateRoute>
+      // index: true,
+      element: <PrivateRoute allowedRoles={["admin"]}><AdminOverview></AdminOverview></PrivateRoute>
     },
     {
       path: 'admin/users',
-      element: <PrivateRoute><MyClubs /></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["admin"]}><ManageUsers/></PrivateRoute>
     },
     {
       path: 'admin/clubs',
-      element: <PrivateRoute><MyClubs /></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["admin"]}><ManageClubs></ManageClubs></PrivateRoute>
     },
     {
       path: 'admin/payments',
-      element: <PrivateRoute><MyClubs /></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["admin"]}><ViewPayments/></PrivateRoute>
     },
     {
       path: 'profile',
       element: <PrivateRoute><Profile></Profile></PrivateRoute>
     },
+    
   ]
 },
   {
       path: 'profile',
       element: <PrivateRoute><Profile></Profile></PrivateRoute>
-    },  
+    }, 
+    {
+      path: '/unauthorized',
+      element: <Unauthorized></Unauthorized>
+    }, 
     ]
   },
 ]);
