@@ -48,6 +48,7 @@ import {
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthContext';
 
+
 const ClubDetails = () => {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
@@ -58,6 +59,7 @@ const ClubDetails = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -75,18 +77,57 @@ const ClubDetails = () => {
     fetchClub()
   }, [id])
 
-  const handleJoinClub = () => {
+   useEffect(() => {
+    if (!user || !club?.clubName) return;
+
+    const checkMembership = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/memberships/check', {
+          params: { userEmail: user.email, clubId: club.clubName } // use clubName as clubId
+        });
+        setIsJoined(res.data.isMember);
+      } catch (err) {
+        console.error('Membership check failed', err);
+      }
+    };
+    checkMembership();
+  }, [user, club]);
+
+
+  const handleJoinClub = async () => {
     if (!user) {
       toast.error("Please login to join this club");
       navigate("/login");
       return;
     }
 
-    if (club.data.membershipFee > 0) {
-      navigate(`/payment/membership/${id}`);
+      try {
+    // Prepare membership data
+    const membershipData = {
+      userEmail: user.email,                     // use authenticated user's email
+      clubId: club?.data?.clubName || club.name, // club name from fetched data
+      status: club?.data?.membershipFee === 0 ? "active" : "pendingPayment",
+      paymentId: null,                           // free club has no payment
+      joinedAt: new Date().toISOString(),
+      expiresAt: null
+    };
+
+    // Only POST for free clubs
+    if (club?.data?.membershipFee === 0) {
+      const res = await axios.post("http://localhost:3000/memberships", membershipData);
+
+      if (res.data.success) {
+        toast.success("Successfully joined the club!");
+        setIsJoined(true);
+      }
     } else {
-      toast.success("Successfully joined the club!");
+      // Paid membership - redirect to payment page
+      navigate(`/payment/membership/${id}`);
     }
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to join club. Please try again.");
+  }
   };
 
   const handleShare = (platform) => {
@@ -442,12 +483,15 @@ const ClubDetails = () => {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleJoinClub}
-                    className="px-10 py-4 bg-primary text-white font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 border border-white/20 backdrop-blur-sm relative overflow-hidden group"
+                    disabled={isJoined}
+                    className={`px-10 py-4 rounded-2xl font-bold ${
+    isJoined ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"
+  }`}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-info  to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="relative flex items-center gap-3">
                       <FaRocket className="text-lg" />
-                      <span className="text-lg">Join Club Now</span>
+                      <span className="text-lg">{isJoined ? "Already Joined" : "Join Club Now"}</span>
                       <FaChevronRight className="text-sm group-hover:translate-x-1 transition-transform" />
                     </div>
                   </motion.button>
@@ -799,15 +843,18 @@ const ClubDetails = () => {
                   </div>
 
                   <motion.button
+                    disabled={isJoined}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleJoinClub}
-                    className="w-full py-4 bg-white text-gray-900 font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-xl relative overflow-hidden group"
+                    className={`px-10 py-4 rounded-2xl font-bold ${
+    isJoined ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"
+  }`}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-blue-400 opacity-0 group-hover:opacity-10 transition-opacity" />
                     <div className="relative flex items-center justify-center gap-3">
                       <FaRocket className="text-lg" />
-                      <span className="text-lg">Join Club Now</span>
+                      <span className="text-lg">{isJoined ? "Already Joined" : "Join Club Now"}</span>
                     </div>
                   </motion.button>
 
