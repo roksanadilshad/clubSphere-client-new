@@ -20,9 +20,11 @@ const EventsPage = () => {
 
   // Register mutation
   const registerMutation = useMutation({
-  mutationFn: async (eventId) => {
-    const res = await axiosPublic.post(`/events/${eventId}/register`, {
-      userEmail: user.email,
+  mutationFn: async ({ _id, eventName, clubName, userEmail }) => {
+    const res = await axiosPublic.post(`/events/${_id}/register`, {
+      eventId: eventName,  // name of event
+      clubId: clubName,    // name of club
+      userEmail,
     });
     return res.data;
   },
@@ -35,11 +37,18 @@ const EventsPage = () => {
   },
 });
 
-  const handleRegister = (event) => {
-    if (!user) return toast.error("Please log in to register for events");
 
-    registerMutation.mutate(event._id);
-  };
+  const handleRegister = (event) => {
+  if (!user) return toast.error("Please log in to register for events");
+
+  registerMutation.mutate({
+    _id: event._id,              // event _id for URL
+    eventName: event.title,      // store event name
+    clubName: event.clubName || event.clubId, // fallback to ID if name missing
+    userEmail: user.email,
+  });
+};
+
 
   if (isLoading) {
     return (
