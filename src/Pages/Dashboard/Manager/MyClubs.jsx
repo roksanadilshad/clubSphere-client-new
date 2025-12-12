@@ -59,7 +59,7 @@ const ManageMyClubs = () => {
           <p className="text-gray-600">Manage clubs you've created</p>
         </div>
         <Link
-          to="/dashboard/manager/clubs/create"
+          to="/create-club"
           className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
         >
           <FaPlus />
@@ -109,7 +109,7 @@ const ManageMyClubs = () => {
                 </div>
                 <div className="flex gap-2">
                   <Link
-                    to={`/dashboard/manager/clubs/${club._id}/edit`}
+                    to={`/dashboard/manager/editClub/${club._id}`}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                   >
                     <FaEdit className="text-lg" />

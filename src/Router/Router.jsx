@@ -96,7 +96,7 @@ export const router = createBrowserRouter([
       element: <PrivateRoute allowedRoles={["clubManager"]}><ManageEvents></ManageEvents></PrivateRoute>
     },
     {
-      path: 'manager/editClub',
+      path: 'manager/editClub/:clubId',
       element: <PrivateRoute allowedRoles={["clubManager"]}><EditClub/></PrivateRoute>
     },
     {

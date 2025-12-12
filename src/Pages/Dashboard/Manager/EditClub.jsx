@@ -1,27 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router-dom"; // use react-router-dom
 import { useForm } from "react-hook-form";
 import React, { useEffect, useState } from "react";
 import { FaUpload, FaSave, FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { imageUpload } from "../../../utils";
- // your utility to upload images
+import { imageUpload } from "../../../utils"; // your utility to upload images
+import axiosSecure from "../../../api/axiosSecure";
 
 const EditClub = () => {
-  const { clubId } = useParams();
+  const { clubId } = useParams(); // must match the router path param
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Fetch club data
-  const { data: club, isLoading } = useQuery({
-    queryKey: ["club", clubId],
-    queryFn: async () => {
-      const res = await axios.get(`/api/clubs/${clubId}`);
-      return res.data;
-    },
-  });
+const { data: club, isLoading } = useQuery({
+  queryKey: ["club", clubId],
+  queryFn: async () => {
+    if (!clubId) return null;
+    const res = await axiosSecure.get(`/clubs/${clubId}`);
+    return res.data;
+  },
+  enabled: !!clubId, // only fetch if clubId exists
+});
 
   const {
     register,
@@ -32,6 +33,7 @@ const EditClub = () => {
   } = useForm({
     defaultValues: {},
   });
+//console.log(club);
 
   // Set default values once club data is loaded
   useEffect(() => {
@@ -86,7 +88,7 @@ const EditClub = () => {
       queryClient.invalidateQueries(["managerClubs"]);
       navigate("/dashboard/manager/clubs");
     },
-    onError: () => toast.error("Failed to update club."),
+    onError: (err) => toast.error("Failed to update club.", err),
   });
 
   const onSubmit = (data) => updateClubMutation.mutate(data);
@@ -100,7 +102,7 @@ const EditClub = () => {
   }
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Club</h1>
@@ -115,23 +117,21 @@ const EditClub = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Club Banner
             </label>
-            <div className="flex items-start gap-6">
-              <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300">
-                {imagePreview ? (
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center">
-                    <FaUpload className="text-4xl text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-500">Upload banner image</p>
-                  </div>
-                )}
-              </div>
+            <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 mb-2">
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center">
+                  <FaUpload className="text-4xl text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500">Upload banner image</p>
+                </div>
+              )}
             </div>
-            <label className="mt-3 cursor-pointer inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors text-sm">
+            <label className="cursor-pointer inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors text-sm">
               Choose Image
               <input
                 type="file"
@@ -167,7 +167,9 @@ const EditClub = () => {
               rows="4"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Describe your club..."
-              {...register("description", { required: "Description is required" })}
+              {...register("description", {
+                required: "Description is required",
+              })}
             />
             {errors.description && (
               <p className="text-red-600 text-sm mt-1">{errors.description.message}</p>
