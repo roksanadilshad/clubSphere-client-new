@@ -25,6 +25,7 @@ import EventRegistrations from '../Pages/Dashboard/Manager/EventRegistrations';
 import ManageUsers from '../Pages/Dashboard/Admin/ManageUsers';
 import Unauthorized from '../Pages/Unauthorized';
 import CreateClub from '../Pages/CreateAClub';
+import ManageMyClubs from '../Pages/Dashboard/Manager/MyClubs';
 
 export const router = createBrowserRouter([
   {
@@ -78,10 +79,13 @@ export const router = createBrowserRouter([
       path: 'member/payments',
       element: <PrivateRoute allowedRoles={["member"]}><PaymentHistory></PaymentHistory></PrivateRoute>
     },
+
+
+
     
     {
       path: 'manager/clubs',
-      element: <PrivateRoute allowedRoles={["clubManager"]}><MyClubs></MyClubs></PrivateRoute>
+      element: <PrivateRoute allowedRoles={["clubManager"]}><ManageMyClubs></ManageMyClubs></PrivateRoute>
     },
     {
       path: 'manager/members',
@@ -104,6 +108,10 @@ export const router = createBrowserRouter([
       // index: true,
       element: <PrivateRoute allowedRoles={["clubManager"]}><ManagerOverview /></PrivateRoute>
     },
+
+
+
+    
     {
       path: 'admin',
       // index: true,

@@ -10,7 +10,7 @@ const Clubs = () => {
   useEffect(() => {
     const fetchClubs = async () => {
       try {
-        const res = await axiosPublic.get('/clubs?status=approved'); // no auth token needed
+        const res = await axiosPublic.get('/clubs'); // no auth token needed
         setClubs(res.data);
       } catch (err) {
         console.error('Failed to fetch clubs:', err);

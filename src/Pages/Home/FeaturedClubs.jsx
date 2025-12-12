@@ -24,7 +24,7 @@ const FeaturedClubs = () => {
   const { data: featuredClubs, isLoading } = useQuery({
     queryKey: ["featuredClubs"],
     queryFn: async () => {
-      const response = await axios("http://localhost:3000/featuredClubs");
+      const response = await axios("http://localhost:3000/featuredClubs?status=approved");
       // if (!response.ok) throw new Error("Failed to fetch clubs");
       return response.data;
     },

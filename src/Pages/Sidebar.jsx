@@ -40,7 +40,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 h-screen bg-[#1c1f2e] text-white fixed left-0 top-0 shadow-xl">
+    <div className="w-64 h-screen bg-[#1c1f2e] text-white fixed -z-50 left-0 top-0 shadow-xl">
       <div className="p-6">
         <h2 className="text-2xl font-bold">ClubSphere</h2>
       </div>

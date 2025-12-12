@@ -1,9 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaUpload, FaSave, FaTimes } from "react-icons/fa";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { imageUpload } from "../../../utils";
+ // your utility to upload images
 
 const EditClub = () => {
   const { clubId } = useParams();
@@ -15,59 +18,78 @@ const EditClub = () => {
   const { data: club, isLoading } = useQuery({
     queryKey: ["club", clubId],
     queryFn: async () => {
-      const response = await fetch(`/api/clubs/${clubId}`);
-      if (!response.ok) throw new Error("Failed to fetch club");
-      return response.json();
+      const res = await axios.get(`/api/clubs/${clubId}`);
+      return res.data;
     },
   });
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    reset,
     watch,
+    formState: { errors },
   } = useForm({
-    defaultValues: club,
+    defaultValues: {},
   });
 
-  const bannerImage = watch("bannerImage");
+  // Set default values once club data is loaded
+  useEffect(() => {
+    if (club) {
+      reset({
+        name: club.clubName,
+        description: club.description,
+        category: club.category,
+        location: club.location,
+        membershipFee: club.membershipFee,
+      });
+      setImagePreview(club.bannerImage || null);
+    }
+  }, [club, reset]);
 
-  // Preview image
-  React.useEffect(() => {
+  // Watch bannerImage file input for preview
+  const bannerImage = watch("bannerImage");
+  useEffect(() => {
     if (bannerImage && bannerImage[0]) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
+      reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(bannerImage[0]);
     }
   }, [bannerImage]);
 
-  // Update club mutation
+  // Mutation to update club
   const updateClubMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await fetch(`/api/clubs/${clubId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error("Failed to update club");
-      return response.json();
+      let bannerUrl = club.bannerImage;
+
+      // Upload new image if selected
+      if (data.bannerImage && data.bannerImage[0]) {
+        bannerUrl = await imageUpload(data.bannerImage[0]);
+      }
+
+      const payload = {
+        clubName: data.name,
+        description: data.description,
+        category: data.category,
+        location: data.location,
+        membershipFee: Number(data.membershipFee),
+        bannerImage: bannerUrl,
+        updatedAt: new Date(),
+      };
+
+      const res = await axios.put(`/api/clubs/${clubId}`, payload);
+      return res.data;
     },
     onSuccess: () => {
+      toast.success("Club updated successfully!");
       queryClient.invalidateQueries(["club", clubId]);
       queryClient.invalidateQueries(["managerClubs"]);
-      toast.success("Club updated successfully");
       navigate("/dashboard/manager/clubs");
     },
-    onError: () => {
-      toast.error("Failed to update club");
-    },
+    onError: () => toast.error("Failed to update club."),
   });
 
-  const onSubmit = (data) => {
-    updateClubMutation.mutate(data);
-  };
+  const onSubmit = (data) => updateClubMutation.mutate(data);
 
   if (isLoading) {
     return (
@@ -95,9 +117,9 @@ const EditClub = () => {
             </label>
             <div className="flex items-start gap-6">
               <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300">
-                {imagePreview || club?.bannerImage ? (
+                {imagePreview ? (
                   <img
-                    src={imagePreview || club?.bannerImage}
+                    src={imagePreview}
                     alt="Preview"
                     className="w-full h-full object-cover"
                   />
@@ -152,7 +174,7 @@ const EditClub = () => {
             )}
           </div>
 
-          {/* Category and Location */}
+          {/* Category & Location */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -163,12 +185,12 @@ const EditClub = () => {
                 {...register("category", { required: "Category is required" })}
               >
                 <option value="">Select category</option>
-                <option value="Sports & Fitness">Sports & Fitness</option>
-                <option value="Arts & Culture">Arts & Culture</option>
-                <option value="Technology">Technology</option>
-                <option value="Music">Music</option>
-                <option value="Food & Drink">Food & Drink</option>
-                <option value="Outdoor">Outdoor</option>
+                <option>Sports & Fitness</option>
+                <option>Arts & Culture</option>
+                <option>Technology</option>
+                <option>Music</option>
+                <option>Food & Drink</option>
+                <option>Outdoor</option>
               </select>
               {errors.category && (
                 <p className="text-red-600 text-sm mt-1">{errors.category.message}</p>
@@ -207,9 +229,7 @@ const EditClub = () => {
               })}
             />
             {errors.membershipFee && (
-              <p className="text-red-600 text-sm mt-1">
-                {errors.membershipFee.message}
-              </p>
+              <p className="text-red-600 text-sm mt-1">{errors.membershipFee.message}</p>
             )}
           </div>
 
