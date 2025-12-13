@@ -77,7 +77,7 @@ const ManageEvents = () => {
       </div>
 
       {/* Club Filter */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <select
           value={selectedClub}
           onChange={(e) => setSelectedClub(e.target.value)}
@@ -91,7 +91,7 @@ const ManageEvents = () => {
             </option>
           ))}
         </select>
-      </div>
+      </div> */}
 
       {/* Events Grid */}
       {events?.length > 0 ? (

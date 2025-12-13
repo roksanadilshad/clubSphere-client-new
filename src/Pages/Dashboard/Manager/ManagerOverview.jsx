@@ -1,20 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
-import { AuthContext } from "../../../Context/AuthContext";
+
 import { FaBuilding, FaUsers, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 import { Link } from "react-router";
+import axiosSecure from "../../../api/axiosSecure";
+import { AuthContext } from "../../../Context/AuthContext";
 
 const ManagerOverview = () => {
   const { user } = useContext(AuthContext);
 
   // Fetch manager stats
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading, isError, error } = useQuery({
     queryKey: ["managerStats", user?.email],
     queryFn: async () => {
-      const response = await fetch(`/api/manager/stats?email=${user?.email}`);
-      if (!response.ok) throw new Error("Failed to fetch stats");
-      return response.json();
+      const response = await axiosSecure.get(`/manager/stats?email=${user.email}`);
+      return response.data;
     },
+    enabled: !!user?.email, // Only fetch when email exists
   });
 
   const summaryCards = [
@@ -56,6 +58,14 @@ const ManagerOverview = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-64 text-red-600">
+        Error loading stats: {error?.message || "Unknown error"}
       </div>
     );
   }

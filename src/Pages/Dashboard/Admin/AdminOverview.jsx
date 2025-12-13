@@ -1,15 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { FaUsers, FaBuilding, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 import { motion } from "framer-motion";
+import axiosSecure from "../../../api/axiosSecure";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const AdminOverview = () => {
-  // Fetch summary data
   const { data: stats, isLoading } = useQuery({
     queryKey: ["adminStats"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/stats");
-      if (!response.ok) throw new Error("Failed to fetch stats");
-      return response.json();
+      const response = await axiosSecure.get("/admin/stats");
+      return response.data;
     },
   });
 
@@ -18,7 +18,6 @@ const AdminOverview = () => {
       title: "Total Users",
       value: stats?.totalUsers || 0,
       icon: <FaUsers className="text-3xl" />,
-      color: "from-blue-500 to-blue-600",
       bgColor: "bg-blue-50",
       textColor: "text-blue-600",
     },
@@ -26,7 +25,6 @@ const AdminOverview = () => {
       title: "Total Clubs",
       value: stats?.totalClubs || 0,
       icon: <FaBuilding className="text-3xl" />,
-      color: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-50",
       textColor: "text-purple-600",
     },
@@ -34,7 +32,6 @@ const AdminOverview = () => {
       title: "Total Events",
       value: stats?.totalEvents || 0,
       icon: <FaCalendarAlt className="text-3xl" />,
-      color: "from-green-500 to-green-600",
       bgColor: "bg-green-50",
       textColor: "text-green-600",
     },
@@ -42,7 +39,6 @@ const AdminOverview = () => {
       title: "Total Revenue",
       value: `$${stats?.totalRevenue || 0}`,
       icon: <FaDollarSign className="text-3xl" />,
-      color: "from-yellow-500 to-yellow-600",
       bgColor: "bg-yellow-50",
       textColor: "text-yellow-600",
     },
@@ -50,16 +46,20 @@ const AdminOverview = () => {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
   };
+
+  const membershipsData = stats?.clubsByMembership
+  ? Object.entries(stats.clubsByMembership).map(([clubName, memberCount]) => ({
+      clubName,
+      members: memberCount,
+    }))
+  : [];
 
   if (isLoading) {
     return (
@@ -106,24 +106,21 @@ const AdminOverview = () => {
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Club Status</h2>
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-              <span className="text-sm font-medium text-gray-700">Approved</span>
-              <span className="text-lg font-bold text-green-600">
-                {stats?.clubsByStatus?.approved || 0}
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-              <span className="text-sm font-medium text-gray-700">Pending</span>
-              <span className="text-lg font-bold text-yellow-600">
-                {stats?.clubsByStatus?.pending || 0}
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
-              <span className="text-sm font-medium text-gray-700">Rejected</span>
-              <span className="text-lg font-bold text-red-600">
-                {stats?.clubsByStatus?.rejected || 0}
-              </span>
-            </div>
+            {["approved", "pending", "rejected"].map((status) => (
+              <div
+                key={status}
+                className={`flex items-center justify-between p-3 ${
+                  status === "approved"
+                    ? "bg-green-50 text-green-600"
+                    : status === "pending"
+                    ? "bg-yellow-50 text-yellow-600"
+                    : "bg-red-50 text-red-600"
+                } rounded-lg`}
+              >
+                <span className="text-sm font-medium text-gray-700 capitalize">{status}</span>
+                <span className="text-lg font-bold">{stats?.clubsByStatus?.[status] || 0}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -132,7 +129,10 @@ const AdminOverview = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
           <div className="space-y-3">
             {stats?.recentActivity?.map((activity, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg">
+              <div
+                key={index}
+                className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg"
+              >
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                 <div className="flex-1">
                   <p className="text-sm text-gray-900">{activity.message}</p>
@@ -146,11 +146,23 @@ const AdminOverview = () => {
 
       {/* Memberships Chart Placeholder */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Memberships Overview</h2>
-        <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-          <p className="text-gray-500">Chart will be displayed here (integrate chart library)</p>
-        </div>
-      </div>
+  <h2 className="text-xl font-bold text-gray-900 mb-4">Memberships Overview</h2>
+  {membershipsData.length > 0 ? (
+    <ResponsiveContainer width="100%" height={256}>
+      <BarChart data={membershipsData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="clubName" tick={{ fontSize: 12 }} />
+        <YAxis />
+        <Tooltip />
+        <Bar dataKey="members" fill="#4F46E5" />
+      </BarChart>
+    </ResponsiveContainer>
+  ) : (
+    <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
+      <p className="text-gray-500">No membership data available</p>
+    </div>
+  )}
+</div>
     </div>
   );
 };
