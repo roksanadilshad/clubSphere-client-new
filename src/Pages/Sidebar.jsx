@@ -1,31 +1,35 @@
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
+import { FaBuilding, FaHome, FaUserCircle } from "react-icons/fa";
 
 const Sidebar = () => {
   const { userInfo } = useContext(AuthContext) || {};
   const role = userInfo?.role;
 
   const memberLinks = [
-    { title: "Dashboard Home", path: "/dashboard" },
-    { title: "My Clubs", path: "/dashboard/member/clubs" },
+    { title: "Dashboard Home", icon: <FaHome />, path: "/dashboard" },
+    { title: "My Clubs", icon: <FaBuilding />, path: "/dashboard/member/clubs" },
     { title: "My Memberships", path: "/dashboard/member/myClubs" },
     { title: "My Events", path: "/dashboard/member/events" },
+    { path: "/dashboard/profile", icon: <FaUserCircle />, label: "Profile" },
   ];
 
   const managerLinks = [
-    { title: "Manager Overview", path: "/dashboard/manager" },
-    { title: "My Clubs", path: "/dashboard/manager/clubs" },
+    { title: "Manager Overview", icon: <FaHome />, path: "/dashboard/manager" },
+    { title: "My Clubs", icon: <FaBuilding />, path: "/dashboard/manager/clubs" },
     { title: "Create Event", path: "/dashboard/manager/create-event" },
     { title: "Manage Events", path: "/dashboard/manager/events" },
     { title: "Event Registrations", path: "/dashboard/manager/registrations" },
+    { path: "/dashboard/profile", icon: <FaUserCircle />, label: "Profile" },
   ];
 
   const adminLinks = [
-    { title: "Admin Overview", path: "/dashboard/admin" },
+    { title: "Admin Overview", icon: <FaHome />, path: "/dashboard/admin" },
     { title: "Pending Approvals", path: "/dashboard/admin/approval" },
     { title: "Manage Users", path: "/dashboard/admin/users" },
-    { title: "All Clubs", path: "/dashboard/admin/clubs" },
+    { title: "All Clubs", icon: <FaBuilding />, path: "/dashboard/admin/clubs" },
+    { path: "/dashboard/profile", icon: <FaUserCircle />, label: "Profile" },
   ];
 
   const renderLinks = (links) =>
@@ -50,8 +54,8 @@ const Sidebar = () => {
     <div className="w-64 -z-10 h-screen bg-[#1c1f2e] text-white fixed left-0 top-10 shadow-xl">
       {/* Logo */}
       <div className="p-6 border-b border-gray-700">
-        <h2 className="text-2xl font-bold">ClubSphere</h2>
-        <p className="text-xs text-gray-400 capitalize">
+        {/* <h2 className="text-2xl font-bold">ClubSphere</h2> */}
+        <p className="text-xs pt-5 text-gray-400 capitalize">
           {role || "member"} dashboard
         </p>
       </div>
