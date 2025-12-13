@@ -29,7 +29,8 @@ import ManageMyClubs from '../Pages/Dashboard/Manager/MyClubs';
 import CreateEvent from '../Pages/Dashboard/Manager/CreateEvent';
 import EditEvent from '../Pages/Dashboard/Manager/EditEvent';
 import EventsPage from '../Pages/events/Events';
-// import SelectEvent from '../Pages/Dashboard/Manager/SelectEvent';
+import EventDetails from '../Pages/events/EventDetails';
+
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
         {
           path:'/events' ,
          element:<EventsPage/>
+        },
+        {
+          path:'/eventDetails/:id' ,
+         element:<EventDetails></EventDetails>
         },
         {
   path: '/dashboard',
@@ -115,14 +120,6 @@ export const router = createBrowserRouter([
       path: 'manager/editClub/:clubId',
       element: <PrivateRoute allowedRoles={["clubManager"]}><EditClub/></PrivateRoute>
     },
-//     {
-//   path: 'manager/eventRegistrations',
-//   element: (
-//     <PrivateRoute allowedRoles={["clubManager"]}>
-//       <SelectEvent/>
-//     </PrivateRoute>
-//   )
-// },
     {
   path: 'manager/eventRegistrations/:eventId?',
   element: (
