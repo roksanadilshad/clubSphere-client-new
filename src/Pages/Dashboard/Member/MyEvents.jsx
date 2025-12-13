@@ -3,6 +3,8 @@ import { useContext } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
 import { FaCalendar, FaMapMarkerAlt, FaClock, FaTicketAlt } from "react-icons/fa";
 import { Link } from "react-router";
+import axiosSecure from "../../../api/axiosSecure";
+import Login from "../../Login";
 
 const MyEvents = () => {
   const { user } = useContext(AuthContext);
@@ -10,15 +12,21 @@ const MyEvents = () => {
   // Fetch user's events
   const { data: events, isLoading } = useQuery({
     queryKey: ["myEvents", user?.email],
+    enabled: !!user?.email,
     queryFn: async () => {
-      const response = await fetch(`/api/member/events?email=${user?.email}`);
-      if (!response.ok) throw new Error("Failed to fetch events");
-      return response.json();
+      const response = await axiosSecure.get(`/member/events?email=${user?.email}`);
+      return response.data
     },
   });
 
-  const upcomingEvents = events?.filter((e) => new Date(e.date) > new Date());
-  const pastEvents = events?.filter((e) => new Date(e.date) <= new Date());
+ const upcomingEvents = events?.filter(e => e.date && !isNaN(new Date(e.date)))?.filter(e => new Date(e.date) > new Date());
+const pastEvents = events?.filter(e => e.date && !isNaN(new Date(e.date)))?.filter(e => new Date(e.date) <= new Date());
+
+
+
+console.log("Events fetched:", events);
+events?.forEach(e => console.log(e.title, e.date, new Date(e.date)));
+
 
   if (isLoading) {
     return (
@@ -27,6 +35,7 @@ const MyEvents = () => {
       </div>
     );
   }
+console.log(upcomingEvents);
 
   return (
     <div>
@@ -38,9 +47,9 @@ const MyEvents = () => {
 
       {/* Upcoming Events */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Upcoming Events</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Upcoming Events{events.length}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {upcomingEvents?.map((event) => (
+          {events?.map((event) => (
             <div
               key={event.id}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
