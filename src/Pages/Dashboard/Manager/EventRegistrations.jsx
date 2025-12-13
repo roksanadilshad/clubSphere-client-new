@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { FaSearch, FaEnvelope, FaCalendar, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaSearch, FaEnvelope, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import axiosSecure from "../../../api/axiosSecure";
 
 const EventRegistrations = () => {
   const { eventId } = useParams();
@@ -11,48 +12,46 @@ const EventRegistrations = () => {
   const { data: event, isLoading: eventLoading } = useQuery({
     queryKey: ["event", eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/events/${eventId}`);
-      if (!response.ok) throw new Error("Failed to fetch event");
-      return response.json();
+      const res = await axiosSecure.get(`/events/${eventId}`);
+      return res.data;
     },
+    enabled: !!eventId, // only fetch if eventId exists
   });
 
   // Fetch registrations
-  const { data: registrations, isLoading } = useQuery({
+  const { data: registrations = [], isLoading: regLoading } = useQuery({
     queryKey: ["eventRegistrations", eventId],
     queryFn: async () => {
-      const response = await fetch(`/api/events/${eventId}/registrations`);
-      if (!response.ok) throw new Error("Failed to fetch registrations");
-      return response.json();
+      const res = await axiosSecure.get(`/events/${eventId}/registrations`);
+      return res.data;
     },
+    enabled: !!eventId,
   });
 
-  const filteredRegistrations = registrations?.filter(
+  const filteredRegistrations = registrations.filter(
     (reg) =>
       reg.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       reg.userEmail?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const activeRegistrations = registrations?.filter(
-    (r) => r.status === "registered"
-  ).length;
+  const activeRegistrations = registrations.filter((r) => r.status === "registered").length;
 
-  if (isLoading || eventLoading) {
+  if (eventLoading || regLoading)
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>
     );
-  }
+//console.log(event);
+console.log(filteredRegistrations);
+console.log("ALL REGISTRATIONS:", registrations);
 
   return (
-    <div>
+    <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Event Registrations
-        </h1>
-        <p className="text-gray-600">{event?.title}</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-1">Event Registrations</h1>
+        <p className="text-gray-600">{event?.title || "Event Title"}</p>
       </div>
 
       {/* Event Info Card */}
@@ -60,7 +59,7 @@ const EventRegistrations = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <p className="text-blue-100 text-sm mb-1">Total Registered</p>
-            <p className="text-3xl font-bold">{activeRegistrations || 0}</p>
+            <p className="text-3xl font-bold">{activeRegistrations}</p>
           </div>
           <div>
             <p className="text-blue-100 text-sm mb-1">Max Attendees</p>
@@ -69,7 +68,7 @@ const EventRegistrations = () => {
           <div>
             <p className="text-blue-100 text-sm mb-1">Event Date</p>
             <p className="text-lg font-semibold">
-              {new Date(event?.eventDate).toLocaleDateString()}
+              {event?.eventDate ? new Date(event.eventDate).toLocaleDateString() : "-"}
             </p>
           </div>
           <div>
@@ -101,65 +100,43 @@ const EventRegistrations = () => {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Attendee
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Email
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Registered
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Payment
-                </th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Attendee</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Email</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Registered</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">Payment</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredRegistrations?.map((registration) => (
-                <tr key={registration.id} className="hover:bg-gray-50">
+              {filteredRegistrations.map((reg) => (
+                <tr key={reg._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <img
-                        src={
-                          registration.userPhoto ||
-                          "https://via.placeholder.com/40"
-                        }
-                        alt={registration.userName}
+                        src={reg.userPhoto || "https://via.placeholder.com/40"}
+                        alt={reg.userName || reg.userEmail}
                         className="w-10 h-10 rounded-full object-cover"
                       />
-                      <span className="font-medium text-gray-900">
-                        {registration.userName}
-                      </span>
+                      <span className="font-medium text-gray-900">{reg.userName || "Anonymous"}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <FaEnvelope className="text-gray-400" />
-                      {registration.userEmail}
-                    </div>
+                  <td className="px-6 py-4 text-sm text-gray-600 flex items-center gap-2">
+                    <FaEnvelope className="text-gray-400" /> {reg.userEmail}
                   </td>
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
-                        registration.status === "registered"
+                        reg.status === "registered"
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {registration.status === "registered" ? (
-                        <FaCheckCircle />
-                      ) : (
-                        <FaTimesCircle />
-                      )}
-                      {registration.status}
+                      {reg.status === "registered" ? <FaCheckCircle /> : <FaTimesCircle />}
+                      {reg.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
-                    {new Date(registration.registeredAt).toLocaleDateString()}
+                    {reg.registeredAt ? new Date(reg.registeredAt).toLocaleDateString() : "-"}
                   </td>
                   <td className="px-6 py-4">
                     {event?.isPaid ? (
@@ -176,6 +153,10 @@ const EventRegistrations = () => {
           </table>
         </div>
       </div>
+
+      {filteredRegistrations.length === 0 && (
+        <p className="text-gray-500 mt-6 text-center">No registrations found.</p>
+      )}
     </div>
   );
 };
