@@ -19,13 +19,14 @@ const MyEvents = () => {
     },
   });
 
- const upcomingEvents = events?.filter(e => e.date && !isNaN(new Date(e.date)))?.filter(e => new Date(e.date) > new Date());
-const pastEvents = events?.filter(e => e.date && !isNaN(new Date(e.date)))?.filter(e => new Date(e.date) <= new Date());
+ const upcomingEvents = events?.filter(e => e.date && new Date(e.date) > new Date());
+const pastEvents = events?.filter(e => e.date && new Date(e.date) <= new Date());
 
 
 
-console.log("Events fetched:", events);
-events?.forEach(e => console.log(e.title, e.date, new Date(e.date)));
+
+// console.log("Events fetched:", events);
+// events?.forEach(e => console.log(e.title, e.date, new Date(e.date)));
 
 
   if (isLoading) {
@@ -47,9 +48,9 @@ console.log(upcomingEvents);
 
       {/* Upcoming Events */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Upcoming Events{events.length}</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Total Events {events.length}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {events?.map((event) => (
+          {upcomingEvents?.map((event) => (
             <div
               key={event.id}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
@@ -106,12 +107,13 @@ console.log(upcomingEvents);
                       </span>
                     )}
                   </div>
-                  <Link
-                    to={`/events/${event.id}`}
+                  {/* <Link
+                    
+                   to={`/eventDetails/${event.id}`}
                     className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     View Details
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
