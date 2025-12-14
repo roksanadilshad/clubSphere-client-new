@@ -72,29 +72,47 @@ const EventDetails = () => {
     },
   });
 
-  const handleRegister = () => {
-    if (!userEmail) {
-      toast.error("You must be logged in to register!");
-      return;
-    }
+ const handleRegister = async () => {
+  if (!userEmail) {
+    toast.error("You must be logged in to register!");
+    return;
+  }
 
-    if (registrations?.length >= event.maxAttendees) {
-      toast.error("Event is full!");
-      return;
-    }
+  if (registrations?.length >= event.maxAttendees) {
+    toast.error("Event is full!");
+    return;
+  }
 
-    const isRegistered = registrations?.some((reg) => reg.userEmail === userEmail);
-    if (isRegistered) {
-      toast("You are already registered for this event!");
-      return;
-    }
+  const isRegistered = registrations?.some(reg => reg.userEmail === userEmail);
+  if (isRegistered) {
+    toast("You are already registered for this event!");
+    return;
+  }
 
-    if (event.isPaid) {
-      payMutation.mutate();
-    } else {
-      registerMutation.mutate();
-    }
-  };
+  // If event is free
+  if (!event.isPaid) {
+    registerMutation.mutate();
+    return;
+  }
+
+  // If event is paid, create Stripe checkout session
+  try {
+    const { data } = await axiosSecure.post('/create-event-checkout-session', {
+      eventFee: event.eventFee,
+      eventTitle: event.title,
+      eventId: event._id,
+      userEmail
+    });
+
+    // Redirect to Stripe checkout
+    window.location.href = data.url;
+  } catch (err) {
+    console.error("Event payment error:", err);
+    toast.error(err.response?.data?.message || "Payment failed.");
+  }
+};
+
+
 
   if (isLoading) {
     return (
