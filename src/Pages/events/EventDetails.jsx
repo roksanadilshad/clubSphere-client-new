@@ -30,15 +30,13 @@ const EventDetails = () => {
       const res = await axiosPublic.get(`/events/${eventId}/registrations`);
       return res.data; // array of registrations
     },
-    enabled: !!event, // only run after event is loaded
+    enabled: !!event,
   });
 
-  // 3️⃣ Register mutation
+  // 3️⃣ Free registration mutation
   const registerMutation = useMutation({
     mutationFn: async () => {
-      const res = await axiosSecure.post(`/events/${eventId}/register`, {
-        userEmail, // ✅ backend expects userEmail
-      });
+      const res = await axiosSecure.post(`/events/${eventId}/register`, { userEmail });
       return res.data;
     },
     onSuccess: () => {
@@ -48,9 +46,29 @@ const EventDetails = () => {
     },
     onError: (err) => {
       console.error(err);
-      toast.error(
-        err.response?.data?.error || "Failed to register. You may already be registered."
-      );
+      toast.error(err.response?.data?.error || "Failed to register.");
+    },
+  });
+
+  // 4️⃣ Paid registration (Stripe) mutation
+  const payMutation = useMutation({
+    mutationFn: async () => {
+      const res = await axiosSecure.post(`/create-checkout-session`, {
+        eventId,
+        userEmail,
+      });
+      return res.data; // should return { url }
+    },
+    onSuccess: (data) => {
+      if (data?.url) {
+        window.location.href = data.url; // redirect to Stripe
+      } else {
+        toast.error("Payment session not created.");
+      }
+    },
+    onError: (err) => {
+      console.error(err);
+      toast.error("Payment failed.");
     },
   });
 
@@ -65,16 +83,17 @@ const EventDetails = () => {
       return;
     }
 
-    const isRegistered = registrations?.some(
-      (reg) => reg.userEmail === userEmail
-    );
-
+    const isRegistered = registrations?.some((reg) => reg.userEmail === userEmail);
     if (isRegistered) {
       toast("You are already registered for this event!");
       return;
     }
 
-    registerMutation.mutate();
+    if (event.isPaid) {
+      payMutation.mutate();
+    } else {
+      registerMutation.mutate();
+    }
   };
 
   if (isLoading) {
@@ -119,14 +138,24 @@ const EventDetails = () => {
       <button
         onClick={handleRegister}
         className={`w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors ${
-          registerMutation.isLoading || (registrations?.length ?? 0) >= event.maxAttendees
+          registerMutation.isLoading ||
+          payMutation.isLoading ||
+          (registrations?.length ?? 0) >= event.maxAttendees
             ? "opacity-50 cursor-not-allowed"
             : ""
         }`}
-        disabled={registerMutation.isLoading || (registrations?.length ?? 0) >= event.maxAttendees}
+        disabled={
+          registerMutation.isLoading ||
+          payMutation.isLoading ||
+          (registrations?.length ?? 0) >= event.maxAttendees
+        }
       >
         {(registrations?.length ?? 0) >= event.maxAttendees
           ? "Event Full"
+          : event.isPaid
+          ? payMutation.isLoading
+            ? "Processing Payment..."
+            : `Pay $${event.eventFee}`
           : registerMutation.isLoading
           ? "Registering..."
           : "Register"}

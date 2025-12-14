@@ -30,6 +30,7 @@ import CreateEvent from '../Pages/Dashboard/Manager/CreateEvent';
 import EditEvent from '../Pages/Dashboard/Manager/EditEvent';
 import EventsPage from '../Pages/events/Events';
 import EventDetails from '../Pages/events/EventDetails';
+import MembershipPayment from '../Pages/Dashboard/Payment/MembershipPayment';
 
 
 export const router = createBrowserRouter([
@@ -157,6 +158,10 @@ export const router = createBrowserRouter([
     {
       path: 'profile',
       element: <PrivateRoute><Profile></Profile></PrivateRoute>
+    },
+    {
+      path: 'payment-success',
+      element: <PrivateRoute><MembershipPayment></MembershipPayment></PrivateRoute>
     },
     
   ]

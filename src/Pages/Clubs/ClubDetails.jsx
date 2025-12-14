@@ -95,40 +95,60 @@ const ClubDetails = () => {
 
 
   const handleJoinClub = async () => {
-    if (!user) {
-      toast.error("Please login to join this club");
-      navigate("/login");
-      return;
-    }
+  if (!user) {
+    toast.error("Please login to join this club");
+    navigate("/login");
+    return;
+  }
 
-      try {
-    // Prepare membership data
-    const membershipData = {
-      userEmail: user.email,                     // use authenticated user's email
-      clubId: club?.data?.clubName || club.name, // club name from fetched data
-      status: club?.data?.membershipFee === 0 ? "active" : "pendingPayment",
-      paymentId: null,                           // free club has no payment
-      joinedAt: new Date().toISOString(),
-      expiresAt: null
-    };
+  // already joined safety
+  if (isJoined) return;
 
-    // Only POST for free clubs
-    if (club?.data?.membershipFee === 0) {
-      const res = await axios.post("http://localhost:3000/memberships", membershipData);
+  try {
+    // FREE CLUB
+    if (club.data.membershipFee === 0) {
+      const membershipData = {
+        userEmail: user.email,
+        clubId: club.data.clubName, // you are using clubName as clubId
+        status: "active",
+        paymentId: null,
+        joinedAt: new Date(),
+        expiresAt: null
+      };
+
+      const res = await axios.post(
+        "http://localhost:3000/memberships",
+        membershipData
+      );
 
       if (res.data.success) {
         toast.success("Successfully joined the club!");
         setIsJoined(true);
       }
-    } else {
-      // Paid membership - redirect to payment page
-      navigate(`/payment/membership/${id}`);
+      return;
     }
+
+    // PAID CLUB → STRIPE
+    const paymentInfo = {
+      membershipFee: club.data.membershipFee,
+      clubName: club.data.clubName,
+      clubId: club.data._id,        // real MongoDB _id
+      userEmail: user.email
+    };
+
+    const res = await axios.post(
+      "http://localhost:3000/create-checkout-session",
+      paymentInfo
+    );
+
+    // redirect to Stripe checkout
+    window.location.href = res.data.url;
+
   } catch (err) {
     console.error(err);
-    toast.error("Failed to join club. Please try again.");
+    toast.error("Failed to start payment. Try again.");
   }
-  };
+};
 
   const handleShare = (platform) => {
     const url = window.location.href;
