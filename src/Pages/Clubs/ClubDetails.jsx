@@ -47,6 +47,7 @@ import {
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthContext';
+import axiosSecure from '../../api/axiosSecure';
 
 
 const ClubDetails = () => {
@@ -66,7 +67,7 @@ const ClubDetails = () => {
     const fetchClub = async () => {
       try {
         const res = await axios.get(`http://localhost:3000/clubs/${id}`)
-        setClub(res)
+        setClub(res.data)
       } catch (err) {
         setError('Error fetching club details');
         console.error(err);
@@ -78,13 +79,18 @@ const ClubDetails = () => {
   }, [id])
 
    useEffect(() => {
-    if (!user || !club?.clubName) return;
+    if (!user || !club?._id) return;
 
     const checkMembership = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/memberships/check', {
-          params: { userEmail: user.email, clubId: club.clubName } // use clubName as clubId
-        });
+        const res = await axios.get('http://localhost:3000/memberships/check',
+           {
+          params: { 
+            userEmail: user.email, 
+            clubId: club._id.toString()
+          } // use clubName as clubId
+        }
+      );
         setIsJoined(res.data.isMember);
       } catch (err) {
         console.error('Membership check failed', err);
@@ -105,21 +111,27 @@ const ClubDetails = () => {
   if (isJoined) return;
 
   try {
+    const fee = Number(club.membershipFee || 0);
     // FREE CLUB
-    if (club.data.membershipFee === 0) {
+    if (fee === 0) {
       const membershipData = {
         userEmail: user.email,
-        clubId: club.data.clubName, // you are using clubName as clubId
+        clubId: club._id, 
+        clubName:club.clubName,
         status: "active",
         paymentId: null,
         joinedAt: new Date(),
-        expiresAt: null
+        expiresAt: null,
+        membershipFee: club.membershipFee,
       };
+      
+      
 
-      const res = await axios.post(
-        "http://localhost:3000/memberships",
+      const res = await axiosSecure.post(
+        "/memberships",
         membershipData
       );
+//console.log(res.data);
 
       if (res.data.success) {
         toast.success("Successfully joined the club!");
@@ -127,12 +139,13 @@ const ClubDetails = () => {
       }
       return;
     }
+//console.log(club.data.membershipFee);
 
     // PAID CLUB → STRIPE
     const paymentInfo = {
-      membershipFee: club.data.membershipFee,
-      clubName: club.data.clubName,
-      clubId: club.data._id,        // real MongoDB _id
+      membershipFee: fee,
+      clubName: club.clubName,
+      clubId: club._id,        // real MongoDB _id
       userEmail: user.email
     };
 
@@ -247,8 +260,8 @@ const ClubDetails = () => {
         <div className="relative h-[700px] bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 overflow-hidden">
           <div className="absolute inset-0">
             <img
-              src={club.data.bannerImage}
-              alt={club.data.clubName}
+              src={club.bannerImage}
+              alt={club.clubName}
               className="w-full h-full object-cover opacity-60"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
@@ -400,10 +413,10 @@ const ClubDetails = () => {
                     <div className="px-5 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-sm font-bold shadow-xl border border-blue-400/30">
                       <div className="flex items-center gap-2">
                         <FaGlobe className="text-xs" />
-                        {club.data.category}
+                        {club.category}
                       </div>
                     </div>
-                    {club.data.status === "approved" && (
+                    {club.status === "approved" && (
                       <div className="px-5 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full text-sm font-bold flex items-center gap-2 shadow-xl border border-emerald-400/30">
                         <FaShieldAlt className="text-xs" />
                         Verified Club
@@ -430,7 +443,7 @@ const ClubDetails = () => {
                       textShadow: '0 4px 20px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.1)'
                     }}
                   >
-                    {club.data.clubName}
+                    {club.clubName}
                   </motion.h1>
 
                   {/* Enhanced Stats */}
@@ -446,7 +459,7 @@ const ClubDetails = () => {
                       </div>
                       <div>
                         <p className="text-white/70 text-xs font-medium">Location</p>
-                        <p className="text-white font-bold text-sm">{club.data.location}</p>
+                        <p className="text-white font-bold text-sm">{club.location}</p>
                       </div>
                     </div>
                     
@@ -456,7 +469,7 @@ const ClubDetails = () => {
                       </div>
                       <div>
                         <p className="text-white/70 text-xs font-medium">Members</p>
-                        <p className="text-white font-bold text-sm">{club.data.memberCount || 0}</p>
+                        <p className="text-white font-bold text-sm">{club.memberCount || 0}</p>
                       </div>
                     </div>
                     
@@ -466,7 +479,7 @@ const ClubDetails = () => {
                       </div>
                       <div>
                         <p className="text-white/70 text-xs font-medium">Founded</p>
-                        <p className="text-white font-bold text-sm">{new Date(club.data.createdAt).getFullYear()}</p>
+                        <p className="text-white font-bold text-sm">{new Date(club.createdAt).getFullYear()}</p>
                       </div>
                     </div>
                     
@@ -491,11 +504,11 @@ const ClubDetails = () => {
                 >
                   <div className="text-right mb-2">
                     <p className="text-white/80 text-sm font-medium">
-                      {club.data.membershipFee > 0 ? 'Premium Membership' : 'Free to Join'}
+                      {club.membershipFee > 0 ? 'Premium Membership' : 'Free to Join'}
                     </p>
                     <p className="text-white text-3xl font-black">
-                      {club.data.membershipFee > 0 ? `৳${club.data.membershipFee}` : 'FREE'}
-                      {club.data.membershipFee > 0 && <span className="text-lg font-normal">/month</span>}
+                      {club.membershipFee > 0 ? `৳${club.membershipFee}` : 'FREE'}
+                      {club.membershipFee > 0 && <span className="text-lg font-normal">/month</span>}
                     </p>
                   </div>
                   
@@ -503,9 +516,11 @@ const ClubDetails = () => {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleJoinClub}
-                    disabled={isJoined}
+                    disabled={isJoined || !club}
                     className={`px-10 py-4 rounded-2xl font-bold ${
-    isJoined ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"
+    isJoined || !club
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-primary text-white"
   }`}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-info  to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -550,7 +565,7 @@ const ClubDetails = () => {
                   </div>
                   
                   <p className="text-gray-700 leading-relaxed text-lg mb-8 font-medium">
-                    {club.data.description}
+                    {club.description}
                   </p>
 
                   <div className="grid md:grid-cols-2 gap-8">
@@ -690,7 +705,7 @@ const ClubDetails = () => {
                         {
                           icon: FaRocket,
                           title: "Club Founded",
-                          date: new Date(club.data.createdAt).toLocaleDateString('en-US', { 
+                          date: new Date(club.createdAt).toLocaleDateString('en-US', { 
                             year: 'numeric', 
                             month: 'long', 
                             day: 'numeric' 
@@ -706,7 +721,7 @@ const ClubDetails = () => {
                         {
                           icon: FaCheckCircle,
                           title: "Last Updated",
-                          date: new Date(club.data.updatedAt).toLocaleDateString('en-US', { 
+                          date: new Date(club.updatedAt).toLocaleDateString('en-US', { 
                             year: 'numeric', 
                             month: 'long', 
                             day: 'numeric' 
@@ -761,7 +776,7 @@ const ClubDetails = () => {
                       {
                         icon: FaUsers,
                         label: "Active Members",
-                        value: club.data.memberCount || 0,
+                        value: club.memberCount || 0,
                         change: "+12%",
                         color: "from-blue-500 to-blue-600",
                         bgColor: "bg-blue-50"
@@ -837,11 +852,11 @@ const ClubDetails = () => {
                     </div>
                     <div>
                       <p className="text-white/80 text-sm font-medium">
-                        {club.data.membershipFee > 0 ? 'Premium Membership' : 'Free Membership'}
+                        {club.membershipFee > 0 ? 'Premium Membership' : 'Free Membership'}
                       </p>
                       <p className="text-white text-2xl font-black">
-                        {club.data.membershipFee === 0 ? "FREE" : `৳${club.data.membershipFee}`}
-                        {club.data.membershipFee > 0 && <span className="text-lg font-normal opacity-80">/month</span>}
+                        {club.membershipFee === 0 ? "FREE" : `৳${club.membershipFee}`}
+                        {club.membershipFee > 0 && <span className="text-lg font-normal opacity-80">/month</span>}
                       </p>
                     </div>
                   </div>
@@ -863,12 +878,14 @@ const ClubDetails = () => {
                   </div>
 
                   <motion.button
-                    disabled={isJoined}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleJoinClub}
+                    disabled={isJoined || !club}
                     className={`px-10 py-4 rounded-2xl font-bold ${
-    isJoined ? "bg-gray-400 cursor-not-allowed" : "bg-primary text-white"
+    isJoined || !club
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-primary text-white"
   }`}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-blue-400 opacity-0 group-hover:opacity-10 transition-opacity" />
@@ -899,11 +916,11 @@ const ClubDetails = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">Club Admin</p>
-                    <p className="text-sm text-gray-600">{club.data.managerEmail}</p>
+                    <p className="text-sm text-gray-600">{club.managerEmail}</p>
                   </div>
                 </div>
                 <a
-                  href={`mailto:${club.data.managerEmail}`}
+                  href={`mailto:${club.managerEmail}`}
                   className="flex items-center justify-center gap-2 w-full py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
                 >
                   <FaEnvelope />
@@ -925,14 +942,14 @@ const ClubDetails = () => {
                       <FaMapMarkerAlt className="text-gray-400" />
                       Location
                     </span>
-                    <span className="font-semibold text-gray-900">{club.data.location}</span>
+                    <span className="font-semibold text-gray-900">{club.location}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 flex items-center gap-2">
                       <FaGlobe className="text-gray-400" />
                       Category
                     </span>
-                    <span className="font-semibold text-gray-900">{club.data.category}</span>
+                    <span className="font-semibold text-gray-900">{club.category}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600 flex items-center gap-2">
@@ -940,9 +957,9 @@ const ClubDetails = () => {
                       Status
                     </span>
                     <span className={`font-semibold capitalize ${
-                      club.data.status === 'approved' ? 'text-green-600' : 'text-yellow-600'
+                      club.status === 'approved' ? 'text-green-600' : 'text-yellow-600'
                     }`}>
-                      {club.data.status}
+                      {club.status}
                     </span>
                   </div>
                 </div>
