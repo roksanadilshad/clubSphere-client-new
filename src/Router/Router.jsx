@@ -32,6 +32,7 @@ import EventsPage from '../Pages/events/Events';
 import EventDetails from '../Pages/events/EventDetails';
 import MembershipPayment from '../Pages/Dashboard/Payment/MembershipPayment';
 import EventPayment from '../Pages/Dashboard/Payment/EventPayment';
+import PaymentHistoryD from '../Pages/Dashboard/Payment/PaymentHistory';
 
 
 export const router = createBrowserRouter([
@@ -155,6 +156,10 @@ export const router = createBrowserRouter([
     {
       path: 'admin/payments',
       element: <PrivateRoute allowedRoles={["admin"]}><ViewPayments/></PrivateRoute>
+    },
+    {
+      path: 'admin/paymentHistory',
+      element: <PrivateRoute allowedRoles={["admin"]}><PaymentHistoryD></PaymentHistoryD></PrivateRoute>
     },
     {
       path: 'profile',

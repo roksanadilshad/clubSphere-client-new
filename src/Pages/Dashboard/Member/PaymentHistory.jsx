@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
 import { FaDownload, FaReceipt, FaFilter } from "react-icons/fa";
+import axiosSecure from "../../../api/axiosSecure";
 
 const PaymentHistory = () => {
   const { user } = useContext(AuthContext);
@@ -10,12 +11,12 @@ const PaymentHistory = () => {
   // Fetch payment history
   const { data: payments, isLoading } = useQuery({
     queryKey: ["paymentHistory", user?.email, typeFilter],
+     enabled: !!user?.email,
     queryFn: async () => {
-      const response = await fetch(
-        `/api/member/payments?email=${user?.email}&type=${typeFilter}`
+      const response = await axiosSecure.get(
+        `/payments?email=${user?.email}&type=${typeFilter}`
       );
-      if (!response.ok) throw new Error("Failed to fetch payments");
-      return response.json();
+      return response.data;
     },
   });
 
@@ -99,9 +100,9 @@ const PaymentHistory = () => {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {payments?.map((payment) => (
-                <tr key={payment.id} className="hover:bg-gray-50">
+                <tr key={payment._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {new Date(payment.date).toLocaleDateString()}
+                    {new Date(payment.paidAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -117,7 +118,7 @@ const PaymentHistory = () => {
                   <td className="px-6 py-4">
                     <div>
                       <p className="text-sm font-medium text-gray-900">
-                        {payment.clubName}
+                        {payment.type === "event" ? payment.eventTitle : payment.clubName}
                       </p>
                       <p className="text-xs text-gray-500">{payment.description}</p>
                     </div>
