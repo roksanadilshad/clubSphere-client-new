@@ -12,7 +12,7 @@ const ViewPayments = () => {
     queryKey: ["adminPayments", typeFilter, dateFilter],
     queryFn: async () => {
       const response = await fetch(
-        `/api/admin/payments?type=${typeFilter}&date=${dateFilter}`
+        `/payments?type=${typeFilter}&date=${dateFilter}`
       );
       if (!response.ok) throw new Error("Failed to fetch payments");
       return response.json();

@@ -33,6 +33,8 @@ import EventDetails from '../Pages/events/EventDetails';
 import MembershipPayment from '../Pages/Dashboard/Payment/MembershipPayment';
 import EventPayment from '../Pages/Dashboard/Payment/EventPayment';
 import PaymentHistoryD from '../Pages/Dashboard/Payment/PaymentHistory';
+import ApplyManager from '../Pages/Manager';
+import ManagerStatus from '../Pages/Dashboard/Admin/ManagerStatus';
 
 
 export const router = createBrowserRouter([
@@ -73,6 +75,10 @@ export const router = createBrowserRouter([
         {
           path:'/eventDetails/:id' ,
          element:<EventDetails></EventDetails>
+        },
+        {
+          path:'/manager' ,
+         element:<PrivateRoute><ApplyManager/></PrivateRoute>
         },
         {
   path: '/dashboard',
@@ -148,6 +154,10 @@ export const router = createBrowserRouter([
     {
       path: 'admin/users',
       element: <PrivateRoute allowedRoles={["admin"]}><ManageUsers/></PrivateRoute>
+    },
+    {
+      path: 'admin/status',
+      element: <PrivateRoute allowedRoles={["admin"]}><ManagerStatus></ManagerStatus></PrivateRoute>
     },
     {
       path: 'admin/clubs',

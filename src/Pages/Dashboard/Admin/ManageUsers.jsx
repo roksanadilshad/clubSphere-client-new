@@ -8,6 +8,7 @@ import axiosSecure from "../../../api/axiosSecure";
 const ManageUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
+  
 
   // Fetch users
   const { data: users = [], isLoading } = useQuery({
@@ -28,7 +29,7 @@ const ManageUsers = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
-      toast.success("Role updated successfully");
+      toast.success("${email} role updated to ${newRole}");
     },
     onError: () => {
       toast.error("Failed to update role");
@@ -36,7 +37,7 @@ const ManageUsers = () => {
   });
 
   const handleRoleChange = (email, newRole) => {
-    if (window.confirm(`Change role to ${newRole}?`)) {
+    if (toast.success(`Change role to ${newRole}?`)) {
       changeRoleMutation.mutate({ email, newRole });
     }
   };
@@ -122,7 +123,7 @@ const ManageUsers = () => {
                   </td>
 
                   <td className="px-6 py-4">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </td>
 
                   <td className="px-6 py-4">
@@ -132,6 +133,7 @@ const ManageUsers = () => {
                         handleRoleChange(user.email, e.target.value)
                       }
                       className="px-3 py-1 border rounded-lg"
+                       disabled={changeRoleMutation.isLoading}
                     >
                       <option value="member">Member</option>
                       <option value="clubManager">Club Manager</option>
