@@ -1,50 +1,57 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../Context/AuthContext";
 import { imageUpload } from "../../utils";
 import { FaUser, FaEnvelope, FaCamera, FaSave, FaShieldAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
+import axiosSecure from "../../api/axiosSecure";
 
 const Profile = () => {
   const { user, updateUserProfile } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
-  // 1️⃣ Fetch user from DATABASE
   const { data: dbUser, isLoading } = useQuery({
     queryKey: ["dbUser", user?.email],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3000/users/${user.email}`);
-      return res.json();
+      const res = await axiosSecure.get(`http://localhost:3000/users/${user.email}`);
+     return res.data
     },
     enabled: !!user?.email,
   });
 
   const [imagePreview, setImagePreview] = useState(user?.photoURL);
+//console.log(user);
+  // Combine Firebase user + db user safely
+  const currentUser = useMemo(() => {
+    return {
+      name: user?.displayName || "",
+      email: user?.email || "",
+      photoURL: user?.photoURL || "",
+      role: dbUser?.role || "user",
+      createdAt: dbUser?.createdAt || null,
+      clubsCount: dbUser?.clubsCount || 0,
+      eventsCount: dbUser?.eventsCount || 0,
+      totalSpent: dbUser?.totalSpent || 0,
+    };
+  }, [user, dbUser]);
 
-  // 2️⃣ Combine firebase user + db user
-  const currentUser = {
-    name: user?.displayName,
-    email: user?.email,
-    photoURL: user?.photoURL,
-    role: dbUser?.role,
-    createdAt: dbUser?.createdAt,
-    clubsCount: dbUser?.clubsCount || 0,
-    eventsCount: dbUser?.eventsCount || 0,
-    totalSpent: dbUser?.totalSpent || 0,
-  };
 
-  const { register, handleSubmit, watch } = useForm({
-    defaultValues: {
-      name: currentUser.name,
-      email: currentUser.email,
-    },
+  // React Hook Form
+  const { register, handleSubmit, reset, watch } = useForm({
+    defaultValues: { name: currentUser.name },
   });
+
+  // Reset form when dbUser loads
+  useEffect(() => {
+    reset({ name: currentUser.name });
+    setImagePreview(currentUser.photoURL);
+  }, [currentUser, reset]);
 
   const photoFile = watch("photo");
 
-  // Preview
-  React.useEffect(() => {
+  // Image preview
+  useEffect(() => {
     if (photoFile && photoFile[0]) {
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result);
@@ -52,7 +59,7 @@ const Profile = () => {
     }
   }, [photoFile]);
 
-  // 3️⃣ Update User Mutation
+  // Update user mutation
   const updateMutation = useMutation({
     mutationFn: async (data) => {
       let photoURL = currentUser.photoURL;
@@ -74,16 +81,18 @@ const Profile = () => {
         }),
       });
 
+      if (!res.ok) throw new Error("Failed to update DB user");
       return res.json();
     },
     onSuccess: () => {
       toast.success("Profile updated successfully");
-      queryClient.invalidateQueries(["dbUser"]);
+      queryClient.invalidateQueries(["dbUser", user.email]);
     },
     onError: () => toast.error("Something went wrong"),
   });
 
   if (isLoading) return <p>Loading...</p>;
+//console.log(currentUser);
 
   return (
     <div>
@@ -117,14 +126,19 @@ const Profile = () => {
           <div className="mt-6 border-t pt-4">
             <p className="text-sm text-gray-600">Member Since</p>
             <p className="font-medium">
-              {new Date(currentUser.createdAt).toLocaleDateString()}
+              {currentUser.createdAt
+                ? new Date(currentUser.createdAt).toLocaleDateString()
+                : "N/A"}
             </p>
           </div>
         </div>
 
         {/* Right Form */}
         <div className="bg-white p-8 rounded-xl shadow lg:col-span-2">
-          <form onSubmit={handleSubmit((data) => updateMutation.mutate(data))} className="space-y-6">
+          <form
+            onSubmit={handleSubmit((data) => updateMutation.mutate(data))}
+            className="space-y-6"
+          >
             {/* Name */}
             <div>
               <label className="block mb-2 font-medium">Full Name</label>

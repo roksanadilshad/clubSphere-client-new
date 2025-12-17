@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { FaSearch, FaDownload, FaFilter, FaDollarSign } from "react-icons/fa";
+import axiosSecure from "../../../api/axiosSecure";
 
 const ViewPayments = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,11 +12,10 @@ const ViewPayments = () => {
   const { data: payments, isLoading } = useQuery({
     queryKey: ["adminPayments", typeFilter, dateFilter],
     queryFn: async () => {
-      const response = await fetch(
+      const response = await axiosSecure.get(
         `/payments?type=${typeFilter}&date=${dateFilter}`
       );
-      if (!response.ok) throw new Error("Failed to fetch payments");
-      return response.json();
+     return response.data
     },
   });
 
@@ -37,6 +37,7 @@ const ViewPayments = () => {
       </div>
     );
   }
+console.log(payments);
 
   return (
     <div>
@@ -168,16 +169,16 @@ const ViewPayments = () => {
                       {payment.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{payment.clubName}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{payment.clubName || payment.eventTitle}</td>
                   <td className="px-6 py-4 text-sm font-semibold text-gray-900">
                     ${payment.amount.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
-                    {new Date(payment.date).toLocaleDateString()}
+                    {new Date(payment.paidAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                      {payment.status}
+                      {payment.paymentStatus}
                     </span>
                   </td>
                 </tr>

@@ -25,7 +25,7 @@ const pastEvents = events?.filter(e => e.date && new Date(e.date) <= new Date())
 
 
 
-// console.log("Events fetched:", events);
+ //console.log("Events fetched:", events);
 // events?.forEach(e => console.log(e.title, e.date, new Date(e.date)));
 
 
@@ -36,7 +36,7 @@ const pastEvents = events?.filter(e => e.date && new Date(e.date) <= new Date())
       </div>
     );
   }
-console.log(upcomingEvents);
+//console.log(upcomingEvents);
 
   return (
     <div>
@@ -50,7 +50,7 @@ console.log(upcomingEvents);
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">Total Events {events.length}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {upcomingEvents?.map((event) => (
+          {events?.map((event) => (
             <div
               key={event.id}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
@@ -82,7 +82,7 @@ console.log(upcomingEvents);
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <FaClock className="text-gray-400" />
-                    <span>{event.time}</span>
+                    <span>{event.date}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <FaMapMarkerAlt className="text-gray-400" />

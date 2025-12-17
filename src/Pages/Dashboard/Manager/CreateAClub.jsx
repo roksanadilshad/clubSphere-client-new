@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useContext } from "react";
-import { AuthContext } from "../Context/AuthContext";
-import { imageUpload } from "../utils";
+import { AuthContext } from "../../../Context/AuthContext";
+import { imageUpload } from "../../../utils";
 import toast from "react-hot-toast";
 
 const CreateClub = () => {

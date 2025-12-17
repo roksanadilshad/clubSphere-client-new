@@ -1,101 +1,91 @@
-import { NavLink } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "../Context/AuthContext";
-import { FaBuilding, FaHome, FaUserCircle } from "react-icons/fa";
+import React from 'react';
+import { CiDeliveryTruck } from 'react-icons/ci';
+import { FaMotorcycle, FaRegCreditCard, FaUsers } from 'react-icons/fa';
+import { Link, NavLink, Outlet } from 'react-router';
+import { RiEBikeFill } from 'react-icons/ri';
+import useRole from '../hooks/useRole';
 
-const Sidebar = () => {
-  const { userInfo } = useContext(AuthContext) || {};
-  const role = userInfo?.role;
+const DashboardLayout = () => {
+    const { role } = useRole();
+    return (
+        <div className="drawer lg:drawer-open max-w-7xl mx-auto ">
+            <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+            <div className="drawer-content">
+              {/* Navbar */}
+              <nav className="navbar w-full bg-base-300">
+        <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost">
+            {/* Sidebar toggle icon */}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
+        </label>
+        <div className="px-4">Zap Shift Dashboard</div>
+              </nav>
+              {/* Page content here */}
+              <Outlet></Outlet>
+            </div>
 
-  const memberLinks = [
-    { title: "Dashboard Home", icon: <FaHome />, path: "/dashboard" },
-    { title: "My Clubs", icon: <FaBuilding />, path: "/dashboard/member/clubs" },
-    { title: "My Memberships", path: "/dashboard/member/myClubs" },
-    { title: "My Events", path: "/dashboard/member/events" },
-    { path: "/dashboard/profile", icon: <FaUserCircle />, label: "Profile" },
-  ];
+            <div className="drawer-side is-drawer-close:overflow-visible">
+                <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
+                <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+                    {/* Sidebar content here */}
+                    <ul className="menu w-full grow">
+                        {/* List item */}
+                        <li>
+            <Link to="/" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
+        {/* Home icon */}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        <span className="is-drawer-close:hidden">Homepage</span>
+              </Link>
+          </li>
 
-  const managerLinks = [
-    { title: "Manager Overview", icon: <FaHome />, path: "/dashboard/manager" },
-    { title: "My Clubs", icon: <FaBuilding />, path: "/dashboard/manager/clubs" },
-    { title: "Create Event", path: "/dashboard/manager/create-event" },
-    { title: "Manage Events", path: "/dashboard/manager/events" },
-    { title: "Event Registrations", path: "/dashboard/manager/registrations" },
-    { path: "/dashboard/profile", icon: <FaUserCircle />, label: "Profile" },
-  ];
+        {/* our dashboard links */}
+        <li>
+       <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="MyParcels" to="/dashboard/my-parcels">
+        <CiDeliveryTruck />
+        <span className="is-drawer-close:hidden">My Parcels</span>
+              </NavLink>
+          </li>
+          <li>
+              <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History" to="/dashboard/payment-history">
+                  <FaRegCreditCard />
+                  <span className="is-drawer-close:hidden">Payment History</span>
+              </NavLink>
+          </li>
+                        {
+                            role === 'admin' && <>
+                                <li>
+                                    <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Approve Riders" to="/dashboard/approve-riders">
+                                        <FaMotorcycle />
+                                        <span className="is-drawer-close:hidden">Approve Riders</span>
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Assign Riders" to="/dashboard/assign-riders">
+                                        <RiEBikeFill />
+                                        <span className="is-drawer-close:hidden">Assign Riders</span>
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Users Management" to="/dashboard/users-management">
+                                        <FaUsers></FaUsers>
+                                        <span className="is-drawer-close:hidden">Users Management</span>
+                                    </NavLink>
+                                </li>
+                            </>
+                        }
 
-  const adminLinks = [
-    { title: "Admin Overview", icon: <FaHome />, path: "/dashboard/admin" },
-    { title: "Pending Approvals", path: "/dashboard/admin/approval" },
-    { title: "Manage Users", path: "/dashboard/admin/users" },
-    { title: "All Clubs", icon: <FaBuilding />, path: "/dashboard/admin/clubs" },
-    { path: "/dashboard/profile", icon: <FaUserCircle />, label: "Profile" },
-  ];
-
-  const renderLinks = (links) =>
-    links.map((link) => (
-      <NavLink
-        key={link.path}
-        to={link.path}
-        className={({ isActive }) =>
-          `block px-4 py-2 rounded-lg text-sm font-medium transition
-          ${
-            isActive
-              ? "bg-white text-black"
-              : "text-gray-300 hover:bg-gray-700"
-          }`
-        }
-      >
-        {link.title}
-      </NavLink>
-    ));
-
-  return (
-    <div className="w-64 -z-10 h-screen bg-[#1c1f2e] text-white fixed left-0 top-10 shadow-xl">
-      {/* Logo */}
-      <div className="p-6 border-b border-gray-700">
-        {/* <h2 className="text-2xl font-bold">ClubSphere</h2> */}
-        <p className="text-xs pt-5 text-gray-400 capitalize">
-          {role || "member"} dashboard
-        </p>
-      </div>
-
-      {/* Navigation */}
-      <nav className="mt-4 px-4 flex flex-col gap-1">
-
-        {/* MEMBER */}
-        {role === "member" && (
-          <>
-            <h3 className="text-xs uppercase text-gray-400 mt-4 mb-2">
-              Member
-            </h3>
-            {renderLinks(memberLinks)}
-          </>
-        )}
-
-        {/* MANAGER */}
-        {role === "manager" && (
-          <>
-            <h3 className="text-xs uppercase text-gray-400 mt-4 mb-2">
-              Manager
-            </h3>
-            {renderLinks(managerLinks)}
-          </>
-        )}
-
-        {/* ADMIN */}
-        {role === "admin" && (
-          <>
-            <h3 className="text-xs uppercase text-gray-400 mt-4 mb-2">
-              Admin Panel
-            </h3>
-            {renderLinks(adminLinks)}
-          </>
-        )}
-
-      </nav>
-    </div>
-  );
+                        {/* List item */}
+                        <li>
+                            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Settings">
+                                {/* Settings icon */}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+                                <span className="is-drawer-close:hidden">Settings</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    );
 };
 
-export default Sidebar;
+export default DashboardLayout;

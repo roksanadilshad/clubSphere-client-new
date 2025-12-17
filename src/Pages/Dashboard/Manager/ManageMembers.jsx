@@ -1,30 +1,47 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FaSearch, FaEnvelope, FaBan } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axiosSecure from "../../../api/axiosSecure";
-import { getAuth } from "firebase/auth";
+import { AuthContext } from "../../../Context/AuthContext";
 
 const ManageMembers = () => {
   const [members, setMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
 
-  const auth = getAuth();
-  const user = auth.currentUser;
+  const { user } = useContext(AuthContext); // ✅ fix here
   const managerEmail = user?.email;
 
+  // Fetch members
   const { data, isLoading } = useQuery({
-    queryKey: ["managerMembers"],
+    queryKey: ["managerMembers", managerEmail],
     queryFn: async () => {
+      if (!managerEmail) return [];
       const res = await axiosSecure.get(`/manager/members?managerEmail=${managerEmail}`);
       return res.data;
     },
-    enabled: !!managerEmail,
+    enabled: !!managerEmail, // only fetch if email exists
   });
+//console.log(data);
 
+  // Map backend data to frontend
   useEffect(() => {
-    if (data) setMembers(data);
+    if (data) {
+      setMembers(
+        data.map((m) => ({
+          id: m._id || m.id,
+          name: m.name || "Unknown",
+          email: m.userEmail || "Unknown",
+          photoURL: m.photoURL || "",
+          clubName: m.clubName || "Unknown",
+          status: m.status || "active",
+          joinedAt: m.joinedAt || m.createdAt || new Date(),
+          expiryDate: m.expiryDate || m.expiresAt || null,
+          membershipFee: m.membershipFee || 0,
+        }))
+      );
+    }
   }, [data]);
 
   // Expire membership mutation
@@ -34,7 +51,7 @@ const ManageMembers = () => {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["managerMembers"]);
+      queryClient.invalidateQueries(["managerMembers", managerEmail]);
       toast.success("Membership expired successfully");
     },
     onError: () => toast.error("Failed to expire membership"),
@@ -48,8 +65,8 @@ const ManageMembers = () => {
 
   const filteredMembers = members.filter(
     (member) =>
-      member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) {
@@ -59,6 +76,7 @@ const ManageMembers = () => {
       </div>
     );
   }
+console.log(members.membershipFee);
 
   return (
     <div>
@@ -72,19 +90,19 @@ const ManageMembers = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <h3 className="text-2xl font-bold text-gray-900 mb-1">
-            {members?.filter((m) => m.status === "active").length || 0}
+            {members.filter((m) => m.status === "active").length}
           </h3>
           <p className="text-sm text-gray-600">Active Members</p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <h3 className="text-2xl font-bold text-gray-900 mb-1">
-            {members?.filter((m) => m.status === "expired").length || 0}
+            {members.filter((m) => m.status === "expired").length}
           </h3>
           <p className="text-sm text-gray-600">Expired Memberships</p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <h3 className="text-2xl font-bold text-gray-900 mb-1">
-            ${members?.reduce((sum, m) => sum + (m.membershipFee || 0), 0).toFixed(2) || 0}
+            ${members.reduce((sum, m) => sum + (m.membershipFee || 0), 0).toFixed(2)}
           </h3>
           <p className="text-sm text-gray-600">Total Revenue</p>
         </div>

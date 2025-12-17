@@ -62,6 +62,9 @@ const ManagerOverview = () => {
     );
   }
 
+  console.log();
+  
+
   if (isError) {
     return (
       <div className="flex items-center justify-center h-64 text-red-600">
@@ -69,6 +72,8 @@ const ManagerOverview = () => {
       </div>
     );
   }
+//console.log(stats);
+
 
   return (
     <div>

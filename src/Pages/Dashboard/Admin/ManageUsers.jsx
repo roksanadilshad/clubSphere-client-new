@@ -134,8 +134,9 @@ const ManageUsers = () => {
                       }
                       className="px-3 py-1 border rounded-lg"
                        disabled={changeRoleMutation.isLoading}
-                    >
-                      <option value="member">Member</option>
+                    ><option>{user.role}</option>
+                      <option 
+                      value="member">Member</option>
                       <option value="clubManager">Club Manager</option>
                       <option value="admin">Admin</option>
                     </select>

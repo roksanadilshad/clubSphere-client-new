@@ -30,6 +30,9 @@ const PaymentHistory = () => {
     );
   }
 
+ // console.log(payments);
+  
+
   return (
     <div>
       {/* Header */}
@@ -128,7 +131,7 @@ const PaymentHistory = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                      {payment.status}
+                      {payment.paymentStatus}
                     </span>
                   </td>
                   <td className="px-6 py-4">

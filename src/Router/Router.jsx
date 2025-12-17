@@ -24,7 +24,7 @@ import ViewPayments from '../Pages/Dashboard/Admin/ViewPaments';
 import EventRegistrations from '../Pages/Dashboard/Manager/EventRegistrations';
 import ManageUsers from '../Pages/Dashboard/Admin/ManageUsers';
 import Unauthorized from '../Pages/Unauthorized';
-import CreateClub from '../Pages/CreateAClub';
+
 import ManageMyClubs from '../Pages/Dashboard/Manager/MyClubs';
 import CreateEvent from '../Pages/Dashboard/Manager/CreateEvent';
 import EditEvent from '../Pages/Dashboard/Manager/EditEvent';
@@ -35,6 +35,9 @@ import EventPayment from '../Pages/Dashboard/Payment/EventPayment';
 import PaymentHistoryD from '../Pages/Dashboard/Payment/PaymentHistory';
 import ApplyManager from '../Pages/Manager';
 import ManagerStatus from '../Pages/Dashboard/Admin/ManagerStatus';
+import AdminRoute from '../PrivateRoute/AdminRoute';
+import ManagerRoute from '../PrivateRoute/ManagerRoute';
+import CreateClub from '../Pages/Dashboard/Manager/CreateAClub';
 
 
 export const router = createBrowserRouter([
@@ -65,10 +68,6 @@ export const router = createBrowserRouter([
          element:<ClubDetails></ClubDetails>
         },
         {
-          path:'/create-club' ,
-         element:<CreateClub></CreateClub>
-        },
-        {
           path:'/events' ,
          element:<EventsPage/>
         },
@@ -81,25 +80,40 @@ export const router = createBrowserRouter([
          element:<PrivateRoute><ApplyManager/></PrivateRoute>
         },
         {
+          path:'/create-club' ,
+         element:<ManagerRoute><CreateClub></CreateClub></ManagerRoute>
+        },
+        
+  {
+      path: 'profile',
+      element: <PrivateRoute><Profile></Profile></PrivateRoute>
+    }, 
+    {
+      path: '/unauthorized',
+      element: <Unauthorized></Unauthorized>
+    }, 
+    ]
+  },
+  {
   path: '/dashboard',
   element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
   errorElement: <ErrorPage></ErrorPage>,
   children: [
     {
       path: "member",
-      element: <PrivateRoute allowedRoles={["member"]}><MemberOverview /></PrivateRoute>
+      element: <MemberOverview />
     },
     {
       path: 'member/clubs',
-      element: <PrivateRoute allowedRoles={["member"]}><MyClubs /></PrivateRoute>
+      element: <MyClubs />
     },
     {
       path: 'member/events',
-      element: <PrivateRoute allowedRoles={["member"]}><MyEvents></MyEvents></PrivateRoute>
+      element: <MyEvents></MyEvents>
     },
     {
       path: 'member/payments',
-      element: <PrivateRoute allowedRoles={["member"]}><PaymentHistory></PaymentHistory></PrivateRoute>
+      element: <PaymentHistory></PaymentHistory>
     },
 
 
@@ -107,53 +121,51 @@ export const router = createBrowserRouter([
     
     {
       path: 'manager/clubs',
-      element: <PrivateRoute allowedRoles={["clubManager"]}><ManageMyClubs></ManageMyClubs></PrivateRoute>
+      element: <ManagerRoute><ManageMyClubs></ManageMyClubs></ManagerRoute>
     },
     {
       path: 'manager/members',
-      element: <PrivateRoute allowedRoles={["clubManager"]}><ManageMembers></ManageMembers></PrivateRoute>
+      element: <ManagerRoute><ManageMembers></ManageMembers></ManagerRoute>
     },
     {
       path: 'manager/events',
-      element: <PrivateRoute allowedRoles={["clubManager"]}><ManageEvents></ManageEvents></PrivateRoute>
+      element: <ManagerRoute><ManageEvents></ManageEvents></ManagerRoute>
     },
     {
       path: 'manager/events/create',
-      element: <PrivateRoute allowedRoles={["clubManager"]}><CreateEvent/></PrivateRoute>
+      element: <ManagerRoute><CreateEvent/></ManagerRoute>
     },
     {
       path: 'manager/editEvent/:eventId',
-      element: <PrivateRoute allowedRoles={["clubManager"]}><EditEvent/></PrivateRoute>
+      element: <ManagerRoute><EditEvent/></ManagerRoute>
     },
     {
       path: 'manager/editClub/:clubId',
-      element: <PrivateRoute allowedRoles={["clubManager"]}><EditClub/></PrivateRoute>
+      element: <ManagerRoute><EditClub/></ManagerRoute>
     },
     {
   path: 'manager/eventRegistrations/:eventId?',
   element: (
-    <PrivateRoute allowedRoles={["clubManager"]}>
-      <EventRegistrations />
-    </PrivateRoute>
-  )
-},
+    <ManagerRoute> <EventRegistrations /></ManagerRoute>  
+           )
+    },
     {
       path: 'manager',
       // index: true,
-      element: <PrivateRoute allowedRoles={["clubManager"]}><ManagerOverview /></PrivateRoute>
+      element: <ManagerRoute><ManagerOverview /></ManagerRoute>
     },
-
+    
 
 
     
     {
       path: 'admin',
       // index: true,
-      element: <PrivateRoute allowedRoles={["admin"]}><AdminOverview></AdminOverview></PrivateRoute>
+      element:<AdminRoute><AdminOverview></AdminOverview></AdminRoute>
     },
     {
       path: 'admin/users',
-      element: <PrivateRoute allowedRoles={["admin"]}><ManageUsers/></PrivateRoute>
+      element: <AdminRoute><ManageUsers/></AdminRoute>
     },
     {
       path: 'admin/status',
@@ -161,15 +173,15 @@ export const router = createBrowserRouter([
     },
     {
       path: 'admin/clubs',
-      element: <PrivateRoute allowedRoles={["admin"]}><ManageClubs></ManageClubs></PrivateRoute>
+      element: <AdminRoute><ManageClubs></ManageClubs></AdminRoute>
     },
     {
       path: 'admin/payments',
-      element: <PrivateRoute allowedRoles={["admin"]}><ViewPayments/></PrivateRoute>
+      element:<AdminRoute><ViewPayments/></AdminRoute>
     },
     {
       path: 'admin/paymentHistory',
-      element: <PrivateRoute allowedRoles={["admin"]}><PaymentHistoryD></PaymentHistoryD></PrivateRoute>
+      element: <AdminRoute><PaymentHistoryD></PaymentHistoryD></AdminRoute>
     },
     {
       path: 'profile',
@@ -186,14 +198,4 @@ export const router = createBrowserRouter([
     
   ]
 },
-  {
-      path: 'profile',
-      element: <PrivateRoute><Profile></Profile></PrivateRoute>
-    }, 
-    {
-      path: '/unauthorized',
-      element: <Unauthorized></Unauthorized>
-    }, 
-    ]
-  },
 ]);

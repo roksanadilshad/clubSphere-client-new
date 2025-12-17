@@ -27,6 +27,7 @@
     "react-router-dom": "^7.10.1",
     "recharts": "^3.5.1",
     "stripe": "^20.0.0",
+    "sweetalert2": "^11.26.10",
     "tailwindcss": "^4.1.15"
   },
   "devDependencies": {
