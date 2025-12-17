@@ -1,183 +1,172 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { FaSearch, FaDownload, FaFilter, FaDollarSign } from "react-icons/fa";
+import { FaSearch, FaDownload, FaDollarSign, FaCreditCard, FaCalendarAlt, FaHistory } from "react-icons/fa";
 import axiosSecure from "../../../api/axiosSecure";
+import { motion } from "framer-motion";
 
 const ViewPayments = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
 
-  // Fetch payments
-  const { data: payments, isLoading } = useQuery({
+  // Fetch payments with TanStack Query
+  const { data: payments = [], isLoading } = useQuery({
     queryKey: ["adminPayments", typeFilter, dateFilter],
     queryFn: async () => {
       const response = await axiosSecure.get(
         `/payments?type=${typeFilter}&date=${dateFilter}`
       );
-     return response.data
+      return response.data;
     },
   });
 
-  const filteredPayments = payments?.filter(
+  const filteredPayments = payments.filter(
     (payment) =>
       payment.userEmail?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       payment.clubName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalRevenue = filteredPayments?.reduce(
-    (sum, payment) => sum + payment.amount,
-    0
-  );
+  const totalRevenue = filteredPayments.reduce((sum, p) => sum + p.amount, 0);
+  const membershipRev = payments.filter(p => p.type === "membership").reduce((sum, p) => sum + p.amount, 0);
+  const eventRev = payments.filter(p => p.type === "event").reduce((sum, p) => sum + p.amount, 0);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-600 border-opacity-50"></div>
+        <p className="mt-4 text-slate-400 font-bold animate-pulse">Processing Ledger...</p>
       </div>
     );
   }
-console.log(payments);
 
   return (
-    <div>
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Transactions</h1>
-        <p className="text-gray-600">View and manage all payment records</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
-          <div className="flex items-center justify-between mb-2">
-            <FaDollarSign className="text-3xl opacity-80" />
-            <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">
-              Total
-            </span>
-          </div>
-          <h3 className="text-3xl font-bold mb-1">${totalRevenue?.toFixed(2) || 0}</h3>
-          <p className="text-green-100 text-sm">Total Revenue</p>
+    <div className="max-w-7xl mx-auto p-4 md:p-8 bg-slate-50/30 min-h-screen">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+        <div>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Financial <span className="text-blue-600">Ledger</span></h1>
+          <p className="text-slate-500 font-medium mt-1 uppercase text-xs tracking-widest">Global Transaction Monitoring</p>
         </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-              <FaDollarSign className="text-blue-600 text-xl" />
-            </div>
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-1">
-            {payments?.filter((p) => p.type === "membership").length || 0}
-          </h3>
-          <p className="text-gray-600 text-sm">Membership Payments</p>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-2">
-            <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
-              <FaDollarSign className="text-purple-600 text-xl" />
-            </div>
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-1">
-            {payments?.filter((p) => p.type === "event").length || 0}
-          </h3>
-          <p className="text-gray-600 text-sm">Event Payments</p>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="mb-6 flex flex-col lg:flex-row gap-4">
-        <div className="flex-1 relative">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by user or club..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">All Types</option>
-          <option value="membership">Membership</option>
-          <option value="event">Event</option>
-        </select>
-        <select
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-          className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">All Time</option>
-          <option value="today">Today</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-        </select>
-        <button className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-          <FaDownload />
-          Export
+        <button className="btn bg-white hover:bg-slate-50 border-slate-200 text-slate-700 font-bold rounded-2xl shadow-sm gap-2">
+          <FaDownload className="text-blue-500" />
+          Export CSV
         </button>
       </div>
 
-      {/* Payments Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      {/* Glassmorphism Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <motion.div whileHover={{ y: -5 }} className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] p-8 text-white shadow-2xl shadow-blue-200 relative overflow-hidden">
+          <FaDollarSign className="absolute -right-4 -bottom-4 text-9xl opacity-10 rotate-12" />
+          <p className="text-blue-100 font-bold uppercase text-[10px] tracking-[0.2em] mb-4">Total Net Revenue</p>
+          <h3 className="text-4xl font-black mb-2">${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+          <div className="flex items-center gap-2 text-xs font-bold bg-white/10 w-fit px-3 py-1 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" /> Live Settlement
+          </div>
+        </motion.div>
+
+        <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col justify-between">
+          <div>
+            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
+              <FaCreditCard className="text-emerald-600 text-xl" />
+            </div>
+            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Membership Intake</p>
+            <h3 className="text-2xl font-black text-slate-900">${membershipRev.toLocaleString()}</h3>
+          </div>
+          <p className="text-xs font-bold text-emerald-600 mt-4 underline decoration-2 underline-offset-4 pointer-cursor tracking-tighter uppercase italic">View Details</p>
+        </div>
+
+        <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col justify-between">
+          <div>
+            <div className="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center mb-4">
+              <FaHistory className="text-purple-600 text-xl" />
+            </div>
+            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Event Admissions</p>
+            <h3 className="text-2xl font-black text-slate-900">${eventRev.toLocaleString()}</h3>
+          </div>
+           <p className="text-xs font-bold text-purple-600 mt-4 underline decoration-2 underline-offset-4 pointer-cursor tracking-tighter uppercase italic">View Details</p>
+        </div>
+      </div>
+
+      {/* Control Bar */}
+      <div className="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col lg:flex-row gap-4 mb-8">
+        <div className="flex-1 relative">
+          <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
+          <input
+            type="text"
+            placeholder="Search transaction by email or club name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-14 pr-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 outline-none transition-all font-medium text-slate-600"
+          />
+        </div>
+        <div className="flex gap-4">
+            <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="px-6 py-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-500 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none"
+            >
+            <option value="all">💳 All Categories</option>
+            <option value="membership">Membership</option>
+            <option value="event">Event</option>
+            </select>
+            <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="px-6 py-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-500 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none appearance-none"
+            >
+            <option value="all">📅 Lifetime</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            </select>
+        </div>
+      </div>
+
+      {/* Professional Transaction Table */}
+      <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Transaction ID
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  User
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Type
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Club/Event
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Amount
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Date
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Status
-                </th>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-8 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tx ID</th>
+                <th className="px-8 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Customer</th>
+                <th className="px-8 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Type</th>
+                <th className="px-8 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Amount</th>
+                <th className="px-8 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Execution Date</th>
+                <th className="px-8 py-6 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredPayments?.map((payment) => (
-                <tr key={payment.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-mono text-gray-600">
-                    #{payment.transactionId}
+            <tbody className="divide-y divide-slate-50">
+              {filteredPayments.map((payment) => (
+                <tr key={payment._id} className="hover:bg-slate-50/80 transition-all duration-200">
+                  <td className="px-8 py-6">
+                    <span className="font-mono text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
+                      {payment.transactionId?.slice(-8).toUpperCase() || "N/A"}
+                    </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{payment.userEmail}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                        payment.type === "membership"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-purple-100 text-purple-700"
-                      }`}
-                    >
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-black text-slate-800 tracking-tight">{payment.userEmail}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{payment.clubName || payment.eventTitle}</p>
+                  </td>
+                  <td className="px-8 py-6">
+                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
+                        payment.type === "membership" ? "bg-indigo-50 text-indigo-600" : "bg-purple-50 text-purple-600"
+                    }`}>
                       {payment.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{payment.clubName || payment.eventTitle}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                    ${payment.amount.toFixed(2)}
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-black text-slate-900">${payment.amount.toFixed(2)}</p>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {new Date(payment.paidAt).toLocaleDateString()}
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2 text-slate-500 font-bold text-xs">
+                        <FaCalendarAlt className="opacity-30" />
+                        {new Date(payment.paidAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                  <td className="px-8 py-6">
+                    <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700 shadow-sm border border-emerald-200/50">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       {payment.paymentStatus}
                     </span>
                   </td>
@@ -186,6 +175,11 @@ console.log(payments);
             </tbody>
           </table>
         </div>
+        {filteredPayments.length === 0 && (
+            <div className="p-20 text-center">
+                <p className="text-slate-400 font-bold italic">No transactions found for current filter criteria.</p>
+            </div>
+        )}
       </div>
     </div>
   );

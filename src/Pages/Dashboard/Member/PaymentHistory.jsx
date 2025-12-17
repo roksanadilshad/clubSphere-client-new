@@ -1,17 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../Context/AuthContext";
-import { FaDownload, FaReceipt, FaFilter } from "react-icons/fa";
+import { FaDownload, FaReceipt, FaFilter, FaArrowRight, FaCreditCard } from "react-icons/fa";
 import axiosSecure from "../../../api/axiosSecure";
 
 const PaymentHistory = () => {
   const { user } = useContext(AuthContext);
   const [typeFilter, setTypeFilter] = useState("all");
 
-  // Fetch payment history
-  const { data: payments, isLoading } = useQuery({
+  const { data: payments = [], isLoading } = useQuery({
     queryKey: ["paymentHistory", user?.email, typeFilter],
-     enabled: !!user?.email,
+    enabled: !!user?.email,
     queryFn: async () => {
       const response = await axiosSecure.get(
         `/payments?email=${user?.email}&type=${typeFilter}`
@@ -20,123 +19,119 @@ const PaymentHistory = () => {
     },
   });
 
-  const totalSpent = payments?.reduce((sum, p) => sum + p.amount, 0);
+  const totalSpent = payments.reduce((sum, p) => sum + p.amount, 0);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      <div className="flex flex-col items-center justify-center h-96">
+        <div className="loading loading-spinner loading-lg text-blue-600"></div>
+        <p className="mt-4 text-slate-400 font-bold uppercase tracking-widest text-[10px]">Encrypting Ledger...</p>
       </div>
     );
   }
 
- // console.log(payments);
-  
-
   return (
-    <div>
+    <div className="max-w-6xl mx-auto p-4 md:p-8">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment History</h1>
-        <p className="text-gray-600">View all your transactions and receipts</p>
-      </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+        <div>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight">Finances</h1>
+          <p className="text-slate-500 font-medium">Tracking your investments in the community</p>
+        </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
-          <h3 className="text-3xl font-bold mb-1">${totalSpent?.toFixed(2) || 0}</h3>
-          <p className="text-blue-100 text-sm">Total Spent</p>
-        </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <h3 className="text-2xl font-bold text-gray-900 mb-1">
-            {payments?.filter((p) => p.type === "membership").length || 0}
-          </h3>
-          <p className="text-sm text-gray-600">Membership Payments</p>
-        </div>
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-          <h3 className="text-2xl font-bold text-gray-900 mb-1">
-            {payments?.filter((p) => p.type === "event").length || 0}
-          </h3>
-          <p className="text-sm text-gray-600">Event Payments</p>
+        {/* Filter Dropdown */}
+        <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+          <FaFilter className="text-slate-400 ml-2" />
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="bg-transparent text-sm font-bold text-slate-700 outline-none pr-4 cursor-pointer"
+          >
+            <option value="all">All Records</option>
+            <option value="membership">Memberships</option>
+            <option value="event">Events</option>
+          </select>
         </div>
       </div>
 
-      {/* Filter */}
-      <div className="mb-6 flex items-center gap-4">
-        <FaFilter className="text-gray-400" />
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="all">All Payments</option>
-          <option value="membership">Memberships</option>
-          <option value="event">Events</option>
-        </select>
+      {/* Stats Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+        <div className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-200/20">
+          <div className="absolute right-[-10%] top-[-20%] w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
+          <FaCreditCard className="text-blue-500/40 text-4xl mb-6" />
+          <h3 className="text-4xl font-black mb-1">${totalSpent.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h3>
+          <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">Aggregate Expenditure</p>
+        </div>
+        
+        <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col justify-center">
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Membership Fees</p>
+            <h3 className="text-3xl font-black text-slate-800">
+                {payments.filter(p => p.type === "membership").length} 
+                <span className="text-sm font-bold text-slate-300 ml-2">Trans.</span>
+            </h3>
+        </div>
+
+        <div className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm flex flex-col justify-center">
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">Event Bookings</p>
+            <h3 className="text-3xl font-black text-slate-800">
+                {payments.filter(p => p.type === "event").length}
+                <span className="text-sm font-bold text-slate-300 ml-2">Trans.</span>
+            </h3>
+        </div>
       </div>
 
-      {/* Payments List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      {/* Transactions Table */}
+      <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Date
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Type
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Description
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Amount
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
-                  Receipt
-                </th>
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Reference / Date</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Category</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Payment Details</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">Invoice</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
-              {payments?.map((payment) => (
-                <tr key={payment._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {new Date(payment.paidAt).toLocaleDateString()}
+            <tbody className="divide-y divide-slate-50">
+              {payments.map((payment) => (
+                <tr key={payment._id} className="group hover:bg-slate-50/50 transition-colors">
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-black text-slate-800 tracking-tight leading-none mb-1">
+                        #{payment.transactionId?.slice(-8).toUpperCase() || "REF-ID"}
+                    </p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">
+                        {new Date(payment.paidAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
                   </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                        payment.type === "membership"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-purple-100 text-purple-700"
-                      }`}
-                    >
+                  
+                  <td className="px-8 py-6">
+                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                      payment.type === "membership" ? "bg-indigo-50 text-indigo-600 border border-indigo-100" : "bg-blue-50 text-blue-600 border border-blue-100"
+                    }`}>
                       {payment.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
+
+                  <td className="px-8 py-6">
+                    <p className="text-sm font-bold text-slate-700 leading-tight">
                         {payment.type === "event" ? payment.eventTitle : payment.clubName}
-                      </p>
-                      <p className="text-xs text-gray-500">{payment.description}</p>
+                    </p>
+                    <p className="text-[11px] font-medium text-slate-400 mt-1">${payment.amount.toFixed(2)} USD</p>
+                  </td>
+
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span className="text-[10px] font-black uppercase text-emerald-600 tracking-widest">
+                            {payment.paymentStatus}
+                        </span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                    ${payment.amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                      {payment.paymentStatus}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                      <FaDownload />
+
+                  <td className="px-8 py-6 text-right">
+                    <button className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm">
+                      <FaDownload size={14} />
                     </button>
                   </td>
                 </tr>
@@ -144,16 +139,17 @@ const PaymentHistory = () => {
             </tbody>
           </table>
         </div>
-      </div>
 
-      {/* Empty State */}
-      {payments?.length === 0 && (
-        <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
-          <FaReceipt className="text-6xl text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-900 mb-2">No Payments Yet</h3>
-          <p className="text-gray-600">Your payment history will appear here</p>
-        </div>
-      )}
+        {payments.length === 0 && (
+          <div className="p-20 text-center">
+            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FaReceipt className="text-3xl text-slate-200" />
+            </div>
+            <h3 className="text-xl font-black text-slate-800 mb-2">Clear Ledger</h3>
+            <p className="text-slate-400 text-sm max-w-xs mx-auto mb-8">You haven't made any transactions yet. Join a club or register for an event to get started.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

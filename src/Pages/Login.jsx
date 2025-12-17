@@ -1,8 +1,9 @@
 import { use, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
 
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCheckCircle, FaArrowLeft } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 
 import toast from "react-hot-toast";
@@ -20,7 +21,7 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     watch,
   } = useForm();
 
@@ -31,232 +32,178 @@ const Login = () => {
     setErr(null);
     try {
       await signInUser(email, password);
+      toast.success("Welcome back to ClubSphere!");
       navigate(from, { replace: true });
     } catch (error) {
-      setErr("Invalid email or password.");
-      console.log(error);
+      setErr("Invalid email or password. Please try again.");
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
+      toast.success("Signed in with Google successfully!");
       navigate(from, { replace: true });
     } catch (err) {
       setErr(err.message);
-      toast.error(err.message);
+      toast.error("Google Sign-In failed.");
     }
-  };
-
-  const handleForgetPassword = () => {
-    navigate("/forgetPassword", {
-      state: { email: emailValue || "", from },
-    });
   };
 
   if (loading) return <Loder />;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4 py-12">
-      <div>
-        <title>ClubSphere - Log In</title>
-      </div>
+    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4 md:p-8">
+      {/* Back to Home Button */}
+      <Link 
+        to="/" 
+        className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-primary font-bold transition-all group"
+      >
+        <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+        Back to home
+      </Link>
 
-      <div className="w-full max-w-5xl">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
-          {/* Left Side - Branding */}
-          <div className="hidden lg:block">
-            <div className="bg-gradient-to-br from-gray-900 to-gray-700 rounded-2xl p-12 text-white h-full flex flex-col justify-center">
-              <h2 className="text-4xl font-bold mb-4">Welcome Back!</h2>
-              <p className="text-gray-300 text-lg mb-8">
-                Log in to reconnect with your communities, discover new events,
-                and stay engaged with clubs you love.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-lg">✓</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Join Communities</h3>
-                    <p className="text-gray-300 text-sm">
-                      Connect with people who share your interests
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-lg">✓</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Attend Events</h3>
-                    <p className="text-gray-300 text-sm">
-                      Participate in exciting activities and meetups
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-lg">✓</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">Build Relationships</h3>
-                    <p className="text-gray-300 text-sm">
-                      Make lasting friendships through shared experiences
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-6xl grid lg:grid-cols-2 bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100"
+      >
+        
+        {/* Left Side - Visual Branding */}
+        <div className="hidden lg:flex flex-col justify-between p-16 bg-slate-950 relative overflow-hidden">
+          {/* Decorative Glow */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2" />
+          
+          <div className="relative z-10">
+            <h2 className="text-white text-5xl font-black tracking-tight mb-6">
+              The heartbeat of <br />
+              <span className="text-primary">your community.</span>
+            </h2>
+            <p className="text-slate-400 text-lg leading-relaxed max-w-md">
+              Reconnect with thousands of members, manage your events, and never miss a beat in your favorite clubs.
+            </p>
           </div>
 
-          {/* Right Side - Login Form */}
-          <div>
-            {/* Header */}
-            <div className="text-center lg:text-left mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-3">Log In</h1>
-              <p className="text-gray-600">
-                Enter your credentials to access your account
-              </p>
+          <div className="relative z-10 space-y-6">
+            {[
+              "Real-time event tracking",
+              "Exclusive club discussions",
+              "Verified member network"
+            ].map((text, idx) => (
+              <div key={idx} className="flex items-center gap-4 group">
+                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <FaCheckCircle />
+                </div>
+                <span className="text-white font-semibold">{text}</span>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-slate-500 text-sm font-medium relative z-10">
+            © {new Date().getFullYear()} ClubSphere Inc.
+          </p>
+        </div>
+
+        {/* Right Side - Form */}
+        <div className="p-8 md:p-16 flex flex-col justify-center">
+          <div className="max-w-md mx-auto w-full">
+            <div className="mb-10">
+              <h1 className="text-3xl font-black text-slate-900 mb-2">Welcome Back</h1>
+              <p className="text-slate-500 font-medium">Enter your details to continue your journey.</p>
             </div>
 
-            {/* Card */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              {/* Error Alert */}
-              {err && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-700 text-sm text-center">{err}</p>
-                </div>
-              )}
+            {err && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 text-sm font-bold flex items-center gap-3"
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse" />
+                {err}
+              </motion.div>
+            )}
 
-              {/* Form */}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                {/* Email Field */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.email
-                        ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    } focus:outline-none focus:ring-2 transition-colors`}
-                    placeholder="you@example.com"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value:
-                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/,
-                        message: "Enter a valid email address",
-                      },
-                    })}
-                  />
-                  {errors.email && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  {...register("email", { required: "Required" })}
+                  className={`w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-medium ${
+                    errors.email ? "border-rose-400 focus:border-rose-400" : "border-transparent focus:border-primary focus:bg-white"
+                  }`}
+                  placeholder="name@company.com"
+                />
+              </div>
 
-                {/* Password Field */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+              {/* Password */}
+              <div>
+                <div className="flex justify-between items-center mb-2 ml-1">
+                  <label className="block text-xs font-black uppercase tracking-widest text-slate-400">
                     Password
                   </label>
-                  <div className="relative">
-                    <input
-                      type={showPass ? "text" : "password"}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.password
-                          ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-                          : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      } focus:outline-none focus:ring-2 transition-colors pr-12`}
-                      placeholder="Enter your password"
-                      {...register("password", {
-                        required: "Password is required",
-                        minLength: {
-                          value: 6,
-                          message: "Password must be at least 6 characters",
-                        },
-                      })}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPass(!showPass)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-                    >
-                      {showPass ? (
-                        <FaEye size={20} />
-                      ) : (
-                        <FaEyeSlash size={20} />
-                      )}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </div>
-
-                {/* Forgot Password */}
-                <div className="text-right">
-                  <button
+                  <button 
                     type="button"
-                    onClick={handleForgetPassword}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                    onClick={() => navigate("/forgetPassword", { state: { email: emailValue } })}
+                    className="text-xs font-bold text-primary hover:underline"
                   >
-                    Forgot password?
+                    Forgot?
                   </button>
                 </div>
-
-                {/* Login Button */}
-                <button
-                  type="submit"
-                  className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-                >
-                  Log In
-                </button>
-              </form>
-
-              {/* Divider */}
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">
-                    Or continue with
-                  </span>
+                <div className="relative">
+                  <input
+                    type={showPass ? "text" : "password"}
+                    {...register("password", { required: "Required" })}
+                    className={`w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 transition-all outline-none font-medium ${
+                      errors.password ? "border-rose-400 focus:border-rose-400" : "border-transparent focus:border-primary focus:bg-white"
+                    }`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(!showPass)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    {showPass ? <FaEye size={18} /> : <FaEyeSlash size={18} />}
+                  </button>
                 </div>
               </div>
 
-              {/* Google Login */}
               <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg border border-gray-300 transition-colors duration-200 shadow-sm hover:shadow"
+                disabled={isSubmitting}
+                type="submit"
+                className="w-full bg-slate-950 hover:bg-slate-800 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-slate-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <FcGoogle size={24} />
-                <span>Continue with Google</span>
+                {isSubmitting ? "Authenticating..." : "Sign In"}
               </button>
+            </form>
 
-              {/* Sign Up Link */}
-              <p className="text-center text-sm text-gray-600 mt-6">
-                Don't have an account?{" "}
-                <Link
-                  to="/register"
-                  className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-                >
-                  Sign up
-                </Link>
-              </p>
+            <div className="relative my-10">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+              <div className="relative flex justify-center text-xs font-black uppercase tracking-[0.2em]"><span className="px-4 bg-white text-slate-400">Social Login</span></div>
             </div>
+
+            <button
+              onClick={handleGoogleSignIn}
+              type="button"
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-700 font-bold py-4 rounded-2xl border-2 border-slate-100 transition-all active:scale-[0.98]"
+            >
+              <FcGoogle size={24} />
+              Continue with Google
+            </button>
+
+            <p className="text-center text-slate-500 font-medium mt-10">
+              New to ClubSphere?{" "}
+              <Link to="/register" className="text-primary font-black hover:underline">
+                Create Account
+              </Link>
+            </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

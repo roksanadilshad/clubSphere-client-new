@@ -82,7 +82,7 @@ const HeroBanner = () => {
               </Link>
 
               {role === "clubManager" ? (
-                <Link to="/create-club" className="cta-secondary">
+                <Link to="/dashboard/manager/create-club" className="cta-secondary">
                   <FaPlus className="mr-2" /> Start a Club
                 </Link>
               ) : role === "admin" ? (

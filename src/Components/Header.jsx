@@ -2,8 +2,10 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link, NavLink } from "react-router";
 import { AuthContext } from "../Context/AuthContext";
 import Logo from "./LOgo";
-import { FaBars, FaTimes, FaUser, FaChevronDown, FaLayout, FaUsers, FaSignOutAlt } from "react-icons/fa";
+import { FaBars, FaTimes, FaUser, FaChevronDown,  FaUsers, FaSignOutAlt } from "react-icons/fa";
+import { CgLayoutPin } from "react-icons/cg";
 import { motion, AnimatePresence } from "framer-motion";
+import { LucideLayoutDashboard } from "lucide-react";
 
 const Header = () => {
   const { user, signOutUser } = useContext(AuthContext);
@@ -105,8 +107,8 @@ const Header = () => {
                         </div>
                         
                         <DropdownItem to="/profile" icon={<FaUser />} label="My Profile" onClick={() => setProfileDropdownOpen(false)} />
-                        <DropdownItem to="/dashboard" icon={<FaLayout />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />
-                        <DropdownItem to="/my-clubs" icon={<FaUsers />} label="My Clubs" onClick={() => setProfileDropdownOpen(false)} />
+                        <DropdownItem to="/dashboard" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />
+                        <DropdownItem to="/dashboard/member/clubs" icon={<CgLayoutPin/>} label="My Clubs" onClick={() => setProfileDropdownOpen(false)} />
                         
                         <div className="mt-2 pt-2 border-t border-gray-100 px-2">
                           <button
@@ -170,6 +172,11 @@ const Header = () => {
                         <p className="font-bold text-gray-900">{user.displayName}</p>
                         <button onClick={handleSignout} className="text-sm text-red-500 font-bold">Logout Account</button>
                       </div>
+                    </div>
+                    <div>
+                      <DropdownItem to="/profile" icon={<FaUser />} label="My Profile" onClick={() => setProfileDropdownOpen(false)} />
+                        <DropdownItem to="/dashboard" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />
+                        <DropdownItem to="/dashboard/member/clubs" icon={<CgLayoutPin/>} label="My Clubs" onClick={() => setProfileDropdownOpen(false)} />
                     </div>
                   </div>
                 ) : (
