@@ -1,89 +1,77 @@
-import { motion } from "framer-motion";
+import {
+  FaSearch,
+  FaCalendarCheck,
+  FaUsers,
+  FaCheckCircle,
+} from "react-icons/fa";
+
+const steps = [
+  {
+    id: 1,
+    title: "Discover Clubs & Events",
+    description:
+      "Browse clubs and events using smart search, category, and sorting options.",
+    icon: <FaSearch />,
+  },
+  {
+    id: 2,
+    title: "Register Easily",
+    description:
+      "Choose an event and complete registration in just a few clicks.",
+    icon: <FaCalendarCheck />,
+  },
+  {
+    id: 3,
+    title: "Attend & Participate",
+    description:
+      "Join events and actively engage with members and organizers.",
+    icon: <FaUsers />,
+  },
+  {
+    id: 4,
+    title: "Grow Your Network",
+    description:
+      "Build connections, skills, and long-term community relationships.",
+    icon: <FaCheckCircle />,
+  },
+];
 
 const HowItWorks = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const steps = [
-    {
-      number: "1",
-      title: "Sign Up",
-      description:
-        "Create your free account and complete your profile in minutes",
-    },
-    {
-      number: "2",
-      title: "Find Clubs",
-      description:
-        "Browse and discover clubs that match your interests and location",
-    },
-    {
-      number: "3",
-      title: "Get Involved",
-      description: "Join clubs, attend events, and connect with members",
-    },
-  ];
-
   return (
-    <section className="py-16 px-4 bg-white">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={fadeInUp}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            How ClubSphere Works
-          </h2>
-          <p className="text-gray-600">Join a community in three simple steps</p>
-        </motion.div>
+    <section className="bg-gray-50 py-24">
+      <div className="max-w-7xl mx-auto px-6 text-center">
+        {/* Header */}
+        <h2 className="text-4xl font-bold text-black">
+          How It Works
+        </h2>
+        <p className="text-gray-700 mt-4 max-w-2xl mx-auto">
+          A simple, transparent process designed to help you discover
+          and join meaningful events.
+        </p>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-        >
-          {steps.map((step, index) => (
-            <motion.div key={index} variants={itemVariants} className="text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-900 text-white text-2xl font-bold rounded-full mb-4">
-                {step.number}
+        {/* Steps */}
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step) => (
+            <div
+              key={step.id}
+              className="bg-gray-200 rounded-2xl p-8 transition hover:shadow-md"
+            >
+              {/* Icon */}
+              <div className="w-14 h-14 mx-auto flex items-center justify-center rounded-full bg-primary text-black text-xl">
+                {step.icon}
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+
+              {/* Content */}
+              <h3 className="text-xl font-semibold text-black mt-6">
                 {step.title}
               </h3>
-              <p className="text-gray-600">{step.description}</p>
-            </motion.div>
+
+              <p className="text-sm text-gray-700 mt-3">
+                {step.description}
+              </p>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

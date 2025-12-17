@@ -28,7 +28,6 @@ import Unauthorized from '../Pages/Unauthorized';
 import ManageMyClubs from '../Pages/Dashboard/Manager/MyClubs';
 import CreateEvent from '../Pages/Dashboard/Manager/CreateEvent';
 import EditEvent from '../Pages/Dashboard/Manager/EditEvent';
-import EventsPage from '../Pages/events/Events';
 import EventDetails from '../Pages/events/EventDetails';
 import MembershipPayment from '../Pages/Dashboard/Payment/MembershipPayment';
 import EventPayment from '../Pages/Dashboard/Payment/EventPayment';
@@ -40,6 +39,8 @@ import ManagerRoute from '../PrivateRoute/ManagerRoute';
 import CreateClub from '../Pages/Dashboard/Manager/CreateAClub';
 import ManagerPayments from '../Pages/Dashboard/Manager/ManagerPayments';
 import AboutPage from '../Pages/About';
+import EventsPage from '../Pages/events/Event';
+import ContactUs from '../Pages/Contact';
 
 
 export const router = createBrowserRouter([
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
         {
           path:'/about' ,
          element:<AboutPage/>
+        },
+        {
+          path:'/contact' ,
+         element:<ContactUs/>
         },
         {
           path:'/manager' ,

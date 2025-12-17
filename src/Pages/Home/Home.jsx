@@ -1,3 +1,4 @@
+import UpcomingEventsTimeline from "../events/Upcoming";
 import CTASection from "./CTASection";
 import FeaturedClubs from "./FeaturedClubs";
 import HeroBanner from "./HeroBanner";
@@ -10,14 +11,15 @@ import TestimonialsSection from "./TestimonialsSection";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-primary">
       <HeroBanner />
       {/* <SearchBar /> */}
       <FeaturedClubs />
-      <StatsSection/>
+      <UpcomingEventsTimeline></UpcomingEventsTimeline>
+       <TestimonialsSection/>
       <PopularCategories />
       <HowItWorks />
-      <TestimonialsSection/>
+     
       <CTASection />
     </div>
   );

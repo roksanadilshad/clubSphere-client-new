@@ -1,86 +1,75 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router";
+import { 
+  FaFutbol, FaPalette, FaMicrochip, 
+  FaMusic, FaUtensils, FaCampground, FaArrowRight 
+} from "react-icons/fa";
+import { useNavigate } from "react-router";
+
+const categories = [
+  { name: "Sports & Fitness", count: 124, color: "bg-[#E7FBBE]", icon: <FaFutbol />, text: "text-green-800" },
+  { name: "Arts & Culture", count: 85, color: "bg-[#D9D7F1]", icon: <FaPalette />, text: "text-purple-800" },
+  { name: "Technology", count: 210, color: "bg-[#FFCBCB]", icon: <FaMicrochip />, text: "text-red-800" },
+  { name: "Music", count: 96, color: "bg-[#FFFDDE]", icon: <FaMusic />, text: "text-yellow-800" },
+  { name: "Food & Drink", count: 150, color: "bg-[#E7FBBE]", icon: <FaUtensils />, text: "text-green-800" },
+  { name: "Outdoor", count: 72, color: "bg-[#D9D7F1]", icon: <FaCampground />, text: "text-purple-800" },
+];
 
 const PopularCategories = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
+  const navigate = useNavigate();
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const categories = [
-    { name: "Sports & Fitness", count: 124, color: "bg-[#E7FBBE]" },
-    { name: "Arts & Culture", count: 89, color: "bg-[#FFFDDE]" },
-    { name: "Technology", count: 156, color: "bg-[#D9D7F1]" },
-    { name: "Music", count: 67, color: "bg-[#FFCBCB]" },
-    { name: "Food & Drink", count: 92, color: "bg-[#E7FBBE]" },
-    { name: "Outdoor", count: 78, color: "bg-[#FFFDDE]" },
-  ];
-
+const handleCategoryClick = (categoryName) => {
+  // Redirect to your club listing page with the category filter
+  navigate(`/clubs?category=${encodeURIComponent(categoryName)}`);
+};
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="bg-base-100 py-20 px-6">
       <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={fadeInUp}
-          className="mb-8"
-        >
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Popular Categories
-          </h2>
-          <p className="text-gray-600">Explore clubs by interest</p>
-        </motion.div>
+        {/* Header */}
+        <div className="flex justify-between items-end mb-12">
+          <div>
+            <h2 className="text-4xl font-bold text-base-content">Popular Categories</h2>
+            <p className="text-base-content/60 mt-2 text-lg">
+              Explore the most active communities in ClubSphere.
+            </p>
+          </div>
+          <button className="btn btn-ghost text-primary hidden md:flex items-center gap-2">
+            View All Categories <FaArrowRight />
+          </button>
+        </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
-        >
-          {categories.map((category, index) => (
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categories.map((cat, index) => (
             <motion.div
+            onClick={() => handleCategoryClick(cat.name)}
               key={index}
-              variants={itemVariants}
-              whileHover={{ y: -4 }}
-              className="cursor-pointer"
+              whileHover={{ y: -5 }}
+              className={`group cursor-pointer p-8 rounded-[2rem] transition-all duration-300 ${cat.color} shadow-sm hover:shadow-xl`}
             >
-              <Link
-                to={`/clubs?category=${category.name}`}
-                className={`block ${category.color} rounded-lg p-6 text-center hover:shadow-md transition-shadow`}
-              >
-                <h3 className="font-bold text-gray-900 mb-1">
-                  {category.name}
+              <div className="flex justify-between items-start">
+                <div className={`p-4 rounded-2xl bg-white/50 text-2xl ${cat.text}`}>
+                  {cat.icon}
+                </div>
+                <span className={`font-bold text-sm px-3 py-1 rounded-full bg-white/40 ${cat.text}`}>
+                  {cat.count} Clubs
+                </span>
+              </div>
+
+              <div className="mt-8">
+                <h3 className={`text-2xl font-bold ${cat.text}`}>
+                  {cat.name}
                 </h3>
-                <p className="text-sm text-gray-600">{category.count} clubs</p>
-              </Link>
+                <p className={`mt-2 opacity-70 ${cat.text} font-medium`}>
+                  Browse trending events and meetups in {cat.name.split(' ')[0]}.
+                </p>
+              </div>
+
+              <div className="mt-6 flex items-center gap-2 font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                Explore Now <FaArrowRight />
+              </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

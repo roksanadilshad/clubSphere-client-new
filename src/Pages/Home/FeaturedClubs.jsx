@@ -44,7 +44,7 @@ const FeaturedClubs = () => {
     <div>
 
       {/* <SearchBar /> */}
-    <section className="py-16 px-4 bg-gray-50 dark:bg-neutral">
+    <section className="py-16 px-4 bg-primary dark:bg-neutral">
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}

@@ -24,28 +24,28 @@
 }
 
 [data-theme="dark"] {
-  --color-primary: #000B58;
-  --color-secondary: #003161;
-  --color-accent: #FFF4B7;
-  --color-neutral: #006A67;
+  --color-primary: #092635;
+  --color-secondary: #5C8374;
+  --color-accent: #1B4242;
+  --color-neutral: #9EC8B9;
 }
 /* body{
     background-color: #FFFDDE;
 } */
 
-body {
+/* body {
   background-color: var(--color-primary);
   color: var(--color-text);
-}
+} */
 
 .card {
   background-color: var(--color-secondary);
 }
 
-.btn {
+/* .btn {
   background-color: var(--color-accent);
   color: var(--color-text);
-}
+} */
 
 .active{
     border-bottom: 1px solid #D9D7F1;

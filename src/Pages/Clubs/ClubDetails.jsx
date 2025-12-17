@@ -279,7 +279,7 @@ const ClubDetails = () => {
    
       <div className="min-h-screen bg-gray-50">
         {/* Hero Banner */}
-        <div className="relative h-[700px] bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 overflow-hidden">
+        <div className="relative h-[700px] bg-gradient-to-br from-slate-300 via-blue-300 to-purple-300 overflow-hidden">
           <div className="absolute inset-0">
             <img
               src={club.bannerImage}
@@ -432,23 +432,23 @@ const ClubDetails = () => {
                     transition={{ duration: 0.6, delay: 0.4 }}
                     className="flex items-center gap-3 mb-6"
                   >
-                    <div className="px-5 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-sm font-bold shadow-xl border border-blue-400/30">
+                    <div className="px-5 py-2 bg-gradient-to-r from-blue-500  text-white rounded-full text-sm font-bold shadow-xl border border-blue-400/30">
                       <div className="flex items-center gap-2">
                         <FaGlobe className="text-xs" />
                         {club.category}
                       </div>
                     </div>
                     {club.status === "approved" && (
-                      <div className="px-5 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full text-sm font-bold flex items-center gap-2 shadow-xl border border-emerald-400/30">
+                      <div className="px-5 py-2 bg-gradient-to-r from-info to-pri text-white rounded-full text-sm font-bold flex items-center gap-2 shadow-xl border border-emerald-400/30">
                         <FaShieldAlt className="text-xs" />
                         Verified Club
                       </div>
                     )}
-                    <div className="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full text-sm font-bold flex items-center gap-2 shadow-xl border border-amber-400/30">
+                    <div className="px-5 py-2 bg-gradient-to-r from-warning  text-white rounded-full text-sm font-bold flex items-center gap-2 shadow-xl border border-amber-400/30">
                       <FaCrown className="text-xs" />
                       Premium
                     </div>
-                    <div className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full shadow-xl border border-yellow-400/30">
+                    <div className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r from-secondary  text-white rounded-full shadow-xl border border-yellow-400/30">
                       <FaStar className="text-xs" />
                       <span className="text-sm font-bold">4.8</span>
                       <span className="text-xs opacity-90">(156 reviews)</span>
@@ -578,7 +578,7 @@ const ClubDetails = () => {
                 
                 <div className="relative">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-primary rounded-2xl flex items-center justify-center">
                       <FaInfoCircle className="text-white text-lg" />
                     </div>
                     <h2 className="text-3xl font-black text-gray-900">
@@ -667,7 +667,7 @@ const ClubDetails = () => {
                 
                 <div className="relative">
                   <div className="flex items-center gap-3 mb-8">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-warning rounded-2xl flex items-center justify-center">
                       <FaChartLine className="text-white text-lg" />
                     </div>
                     <h2 className="text-3xl font-black text-gray-900">
@@ -785,7 +785,7 @@ const ClubDetails = () => {
                 
                 <div className="relative">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-info rounded-2xl flex items-center justify-center">
                       <FaChartLine className="text-white text-sm" />
                     </div>
                     <h3 className="font-black text-gray-900 text-xl">
@@ -862,7 +862,7 @@ const ClubDetails = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden"
+                className="bg-gradient-to-br from-warning  to-primary rounded-3xl shadow-2xl p-8 text-white relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-xl" />
@@ -933,7 +933,7 @@ const ClubDetails = () => {
               >
                 <h3 className="font-bold text-gray-900 mb-4">Club Manager</h3>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-purple-500 rounded-full flex items-center justify-center">
                     <FaUserShield className="text-white" />
                   </div>
                   <div>

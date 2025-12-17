@@ -7,7 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 
 import toast from "react-hot-toast";
 import { AuthContext } from "../Context/AuthContext";
-import Loder from "../Components/Loder";
+import Loder from "../Components/Loading";
 
 const Login = () => {
   const { signInUser, signInWithGoogle, loading } = use(AuthContext);
