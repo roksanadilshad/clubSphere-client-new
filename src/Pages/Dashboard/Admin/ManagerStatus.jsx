@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+
 import { IoPersonRemove } from "react-icons/io5";
 import { AuthContext } from '../../../Context/AuthContext';
 import { FaTrash, FaUserCheck } from 'react-icons/fa';
@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 const queryClient = new QueryClient(); 
 
 export default function ManagerStatus() {
-    const { user } = useContext(AuthContext);
+    //const { user } = useContext(AuthContext);
 
     const { refetch, data: application = [], isLoading } = useQuery({
         queryKey: ['managerApplications', 'pending'],
@@ -34,7 +34,7 @@ export default function ManagerStatus() {
                 refetch();
                 
                 // Determine the success message
-                const actionText = variables.role === 'manager' 
+                const actionText = variables.role === 'clubManager' 
                     ? `Role set to Manager.` 
                     : `Application rejected.`;
 
@@ -58,7 +58,7 @@ export default function ManagerStatus() {
     // 3. Corrected Handlers
     const handleApproval = applicants => {
         //  Send the correct target role 'manager'
-        roleMutation.mutate({ email: applicants.email, role: 'manager' });
+        roleMutation.mutate({ email: applicants.email, role: 'clubManager' });
     }
 
     const handleRejection = applicants => {

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 import { useState } from "react";
 import { FaSearch, FaEnvelope, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import axiosSecure from "../../../api/axiosSecure";
@@ -27,6 +27,7 @@ const EventRegistrations = () => {
     },
     enabled: !!eventId,
   });
+  //console.log(registrations);
 
   const filteredRegistrations = registrations.filter(
     (reg) =>

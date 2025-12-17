@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useContext } from "react";
 
 import { FaBuilding, FaUsers, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
-import { Link } from "react-router";
+import { data, Link } from "react-router";
 import axiosSecure from "../../../api/axiosSecure";
 import { AuthContext } from "../../../Context/AuthContext";
 
@@ -18,6 +18,7 @@ const ManagerOverview = () => {
     },
     enabled: !!user?.email, // Only fetch when email exists
   });
+console.log(stats);
 
   const summaryCards = [
     {
@@ -46,7 +47,7 @@ const ManagerOverview = () => {
     },
     {
       title: "Revenue",
-      value: `$${stats?.totalRevenue || 0}`,
+      value: stats?.totalRevenue || 0,
       icon: <FaDollarSign className="text-2xl" />,
       bgColor: "bg-yellow-50",
       textColor: "text-yellow-600",
@@ -62,7 +63,7 @@ const ManagerOverview = () => {
     );
   }
 
-  console.log();
+  //console.log(stats);
   
 
   if (isError) {
@@ -74,6 +75,7 @@ const ManagerOverview = () => {
   }
 //console.log(stats);
 
+console.log(summaryCards);
 
   return (
     <div>
@@ -107,6 +109,7 @@ const ManagerOverview = () => {
       {/* Recent Clubs */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+
           <h2 className="text-xl font-bold text-gray-900 mb-4">My Clubs</h2>
           <div className="space-y-3">
             {stats?.recentClubs?.map((club) => (

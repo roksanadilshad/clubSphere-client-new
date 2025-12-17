@@ -61,6 +61,7 @@ const MemberOverview = () => {
   const safeUpcomingEvents = stats?.upcomingEvents?.filter(
     (e) => e.date && !isNaN(new Date(e.date))
   );
+console.log(summaryCards);
 
   return (
     <div>

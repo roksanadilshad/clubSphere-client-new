@@ -23,7 +23,7 @@ const ManageMembers = () => {
     },
     enabled: !!managerEmail, // only fetch if email exists
   });
-//console.log(data);
+console.log(data);
 
   // Map backend data to frontend
   useEffect(() => {
@@ -76,7 +76,7 @@ const ManageMembers = () => {
       </div>
     );
   }
-console.log(members.membershipFee);
+console.log(members);
 
   return (
     <div>

@@ -1,33 +1,67 @@
+import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
+import axios from "axios";
 
-const SearchBar = () => {
+const SearchBar = ({ onResults }) => {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All Categories");
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("http://localhost:3000/api/clubs/search", {
+        params: { query, category },
+      });
+      if (onResults) onResults(res.data);
+    } catch (error) {
+      console.error(error);
+      if (onResults) onResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
   return (
-    <section className="bg-white border-b border-gray-200 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search for clubs..."
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-            />
-          </div>
-          <div className="flex gap-4">
-            <select className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900">
-              <option>All Categories</option>
-              <option>Sports</option>
-              <option>Arts</option>
-              <option>Technology</option>
-              <option>Music</option>
-            </select>
-            <button className="px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors">
-              Search
-            </button>
-          </div>
-        </div>
+    <div className="flex flex-col md:flex-row items-center gap-4 mb-12">
+      {/* Search Input */}
+      <div className="flex-1 relative">
+        <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+        <input
+          type="text"
+          placeholder="Search for clubs..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
+          className="w-full pl-16 pr-6 py-5 text-lg border border-gray-300 rounded-2xl shadow-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
+        />
       </div>
-    </section>
+
+      {/* Category Dropdown */}
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        className="px-6 py-4 text-lg border border-gray-300 rounded-2xl shadow-md focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all"
+      >
+        <option>All Categories</option>
+        <option>Sports</option>
+        <option>Arts</option>
+        <option>Technology</option>
+        <option>Music</option>
+      </select>
+
+      {/* Search Button */}
+      <button
+        onClick={handleSearch}
+        className="px-8 py-4 bg-gray-900 text-white text-lg font-semibold rounded-2xl shadow-md hover:bg-gray-800 transition-all"
+      >
+        {loading ? "Searching..." : "Search"}
+      </button>
+    </div>
   );
 };
 

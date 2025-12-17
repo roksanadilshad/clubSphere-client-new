@@ -6,10 +6,13 @@ import { imageUpload } from "../../utils";
 import { FaUser, FaEnvelope, FaCamera, FaSave, FaShieldAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axiosSecure from "../../api/axiosSecure";
+import useRole from "../../hooks/useRole";
+import { Link } from "react-router";
 
 const Profile = () => {
   const { user, updateUserProfile } = useContext(AuthContext);
   const queryClient = useQueryClient();
+  const {role} = useRole()
 
   const { data: dbUser, isLoading } = useQuery({
     queryKey: ["dbUser", user?.email],
@@ -116,11 +119,25 @@ const Profile = () => {
 
             <h2 className="text-xl font-bold">{currentUser.name}</h2>
             <p className="text-gray-600">{currentUser.email}</p>
-
+            
+            
+          {
+            role === "member" ? (
             <div className="mt-3 inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full">
               <FaShieldAlt />
               {currentUser.role}
-            </div>
+              <Link
+                to="/manager"
+                className="text-[10px] pt-2 hover:underline"
+              >
+                Be A Manager
+              </Link>
+            </div>) : (<div className="mt-3 inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full">
+              <FaShieldAlt />
+              {currentUser.role}
+            </div>)
+          }
+            
           </div>
 
           <div className="mt-6 border-t pt-4">

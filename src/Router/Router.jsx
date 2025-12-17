@@ -38,6 +38,8 @@ import ManagerStatus from '../Pages/Dashboard/Admin/ManagerStatus';
 import AdminRoute from '../PrivateRoute/AdminRoute';
 import ManagerRoute from '../PrivateRoute/ManagerRoute';
 import CreateClub from '../Pages/Dashboard/Manager/CreateAClub';
+import ManagerPayments from '../Pages/Dashboard/Manager/ManagerPayments';
+import AboutPage from '../Pages/About';
 
 
 export const router = createBrowserRouter([
@@ -74,6 +76,10 @@ export const router = createBrowserRouter([
         {
           path:'/eventDetails/:id' ,
          element:<EventDetails></EventDetails>
+        },
+        {
+          path:'/about' ,
+         element:<AboutPage/>
         },
         {
           path:'/manager' ,
@@ -142,6 +148,10 @@ export const router = createBrowserRouter([
     {
       path: 'manager/editClub/:clubId',
       element: <ManagerRoute><EditClub/></ManagerRoute>
+    },
+    {
+      path: 'manager/payments',
+      element: <ManagerRoute><ManagerPayments/></ManagerRoute>
     },
     {
   path: 'manager/eventRegistrations/:eventId?',

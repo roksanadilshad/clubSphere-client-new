@@ -14,21 +14,21 @@ const DashboardLayout = () => {
             <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content">
                 {/* Navbar */}
-         <nav className="navbar w-full bg-base-300">
+         <nav className="navbar z-50 w-full top-0  sticky bg-white">
         <label htmlFor="my-drawer-4" aria-label="open sidebar" className="btn btn-square btn-ghost">
             {/* Sidebar toggle icon */}
             <Sidebar></Sidebar>
         </label>
-                    <div className="px-4 font-bold"><Logo/> Dashboard</div>
+                    <div className="px-4  font-bold "><Logo/> Dashboard</div>
         </nav>
                 {/* Page content here */}
          <Outlet></Outlet>
 
             </div>
 
-            <div className="drawer-side is-drawer-close:overflow-visible">
+            <div className="drawer-side pt-20 is-drawer-close:overflow-visible">
   <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
-  <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+  <div className="flex min-h-full flex-col items-start bg-white is-drawer-close:w-14 is-drawer-open:w-64">
       {/* Sidebar content here */}
       <ul className="menu w-full grow">
           {/* List item */}
@@ -79,7 +79,12 @@ const DashboardLayout = () => {
          <CircleDollarSign />
           <span className="is-drawer-close:hidden"> View Payment History</span>
       </NavLink>
-      ) : (
+      ) : role === "clubManager" ? (
+        <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History" to="/dashboard/manager/payments">
+         <CircleDollarSign />
+          <span className="is-drawer-close:hidden">Payment History</span>
+      </NavLink>
+      ):(
          <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History" to="/dashboard/member/payments">
          <CircleDollarSign />
           <span className="is-drawer-close:hidden">Payment History</span>
@@ -131,7 +136,7 @@ const DashboardLayout = () => {
               </NavLink>
           </li>
           <li>
-              <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Manage Users" to="/dashboard/manager/events/create">
+              <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Manage Users" to="/create-club">
                  <Pickaxe />
                   <span className="is-drawer-close:hidden">Create Clubs</span>
               </NavLink>

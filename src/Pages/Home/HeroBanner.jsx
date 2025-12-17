@@ -2,10 +2,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
 import { useState, useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa";
+import useRole from "../../hooks/useRole";
 
 const HeroBanner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-
+const {role} = useRole()
   // Hero slider content
   const heroSlides = [
     {
@@ -67,12 +68,32 @@ const HeroBanner = () => {
                 Explore Clubs
                 <FaChevronRight className="ml-2" />
               </Link>
-              <Link
+              {
+                role === "clubManager" ? (
+                  <Link
                 to="/create-club"
                 className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg border-2 border-gray-900 hover:bg-gray-50 transition-colors"
               >
                 Start a Club
               </Link>
+
+                ) :  role === "admin" ? (
+                  <Link
+                to="/dashboard"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg border-2 border-gray-900 hover:bg-gray-50 transition-colors"
+              >
+                Dashboard
+              </Link>
+                ):(
+              <Link
+                to="/manager"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-900 font-semibold rounded-lg border-2 border-gray-900 hover:bg-gray-50 transition-colors"
+              >
+                Be A Manager
+              </Link>
+                )
+              }
+              
             </div>
 
             {/* Slide Indicators */}

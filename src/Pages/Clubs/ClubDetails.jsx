@@ -48,6 +48,7 @@ import {
 import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthContext';
 import axiosSecure from '../../api/axiosSecure';
+import axiosPublic from '../../api/axiosPublic';
 
 
 const ClubDetails = () => {
@@ -61,6 +62,7 @@ const ClubDetails = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isJoined, setIsJoined] = useState(false);
+  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     if (!id) return;
@@ -77,6 +79,25 @@ const ClubDetails = () => {
     }
     fetchClub()
   }, [id])
+
+  useEffect(() => {
+  if (!club?._id) return;
+
+  const fetchMembers = async () => {
+    try {
+      const res = await axiosPublic.get(`/memberships/club/${club._id}`, {
+        params: { clubId: club._id.toString() }
+      });
+      setMembers(res.data); // assuming API returns an array of members
+    } catch (err) {
+      console.error('Error fetching members:', err);
+    }
+  };
+
+  fetchMembers();
+}, [club]);
+//console.log(members);
+
 
    useEffect(() => {
     if (!user || !club?._id) return;
@@ -116,7 +137,7 @@ const ClubDetails = () => {
     if (fee === 0) {
       const membershipData = {
         userEmail: user.email,
-        clubId: club._id, 
+        clubId: club._id.toString(),
         clubName:club.clubName,
         status: "active",
         paymentId: null,
@@ -145,7 +166,7 @@ const ClubDetails = () => {
     const paymentInfo = {
       membershipFee: fee,
       clubName: club.clubName,
-      clubId: club._id,        // real MongoDB _id
+       clubId: club._id.toString(),        // real MongoDB _id
       userEmail: user.email
     };
 
@@ -251,6 +272,7 @@ const ClubDetails = () => {
       </>
     );
   }
+//console.log(club);
 
   return (
     <>
@@ -469,7 +491,7 @@ const ClubDetails = () => {
                       </div>
                       <div>
                         <p className="text-white/70 text-xs font-medium">Members</p>
-                        <p className="text-white font-bold text-sm">{club.memberCount || 0}</p>
+                        <p className="text-white font-bold text-sm">{members.length}</p>
                       </div>
                     </div>
                     
@@ -776,7 +798,7 @@ const ClubDetails = () => {
                       {
                         icon: FaUsers,
                         label: "Active Members",
-                        value: club.memberCount || 0,
+                        value: members.length,
                         change: "+12%",
                         color: "from-blue-500 to-blue-600",
                         bgColor: "bg-blue-50"
