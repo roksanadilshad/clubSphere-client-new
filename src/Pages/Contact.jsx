@@ -34,7 +34,7 @@ const ContactUs = () => {
   };
 
   return (
-    <section className="bg-info min-h-screen">
+    <section className=" min-h-screen">
       {/* Hero Header */}
       <div className=" py-20">
         <motion.div 

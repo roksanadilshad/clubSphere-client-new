@@ -1,257 +1,201 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, NavLink } from "react-router";
 import { AuthContext } from "../Context/AuthContext";
 import Logo from "./LOgo";
-import { FaBars, FaTimes, FaUser, FaChevronDown } from "react-icons/fa";
+import { FaBars, FaTimes, FaUser, FaChevronDown, FaLayout, FaUsers, FaSignOutAlt } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Handle scroll effect for glassmorphism
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSignout = () => {
-    signOutUser()
-      .then(() => {
-        setProfileDropdownOpen(false);
-      })
-      .catch();
+    signOutUser().then(() => setProfileDropdownOpen(false));
   };
 
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/clubs", label: "Clubs" },
     { to: "/events", label: "Events" },
-    { to: "/about", label: "About Us" },
-    { to: "/contact", label: "Contact" },
+    { to: "/about", label: "About" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header 
+      className={`sticky top-0 z-[100] transition-all duration-300 ${
+        scrolled 
+        ? "bg-white/80 backdrop-blur-md shadow-lg py-2" 
+        : "bg-transparent py-4"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
+          
+          {/* Logo Section */}
+          <div className="flex-shrink-0 scale-110">
             <Logo />
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          {/* Desktop Navigation - Animated Underline */}
+          <nav className="hidden lg:flex items-center space-x-2">
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 className={({ isActive }) =>
-                  `px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    isActive
-                      ? "text-gray-900 bg-gray-100"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  `relative px-4 py-2 text-sm font-bold tracking-tight transition-all duration-300 ${
+                    isActive ? "text-primary" : "text-gray-600 hover:text-primary"
                   }`
                 }
               >
-                {link.label}
+                {({ isActive }) => (
+                  <>
+                    {link.label}
+                    {isActive && (
+                      <motion.div 
+                        layoutId="nav-underline"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full mx-4"
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
 
           {/* Desktop Auth Section */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-6">
             {user ? (
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 p-1 pr-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-all border border-transparent hover:border-primary/20"
                 >
                   <img
-                    src={
-                      user?.photoURL ||
-                      "https://images.unsplash.com/photo-1747592771443-e15f155b1faf?w=100&h=100&fit=crop"
-                    }
-                    alt={user.displayName || "User"}
-                    className="w-8 h-8 rounded-full object-cover border-2 border-gray-200"
+                    src={user?.photoURL || "https://ui-avatars.com/api/?name=" + user.displayName}
+                    alt="User"
+                    className="w-9 h-9 rounded-full object-cover shadow-sm ring-2 ring-white"
                   />
-                  <span className="text-sm font-medium text-gray-700">
-                    {user.displayName || "User"}
-                  </span>
-                  <FaChevronDown className="text-gray-400 text-xs" />
+                  <FaChevronDown className={`text-gray-500 text-[10px] transition-transform duration-300 ${profileDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {/* Dropdown Menu */}
-                {profileDropdownOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setProfileDropdownOpen(false)}
-                    />
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20">
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="text-sm font-semibold text-gray-900">
-                          {user.displayName || "User"}
-                        </p>
-                        <p className="text-xs text-gray-500 truncate">
-                          {user.email}
-                        </p>
-                      </div>
-                      <NavLink
-                        to="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() => setProfileDropdownOpen(false)}
+                {/* Desktop Dropdown */}
+                <AnimatePresence>
+                  {profileDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0" onClick={() => setProfileDropdownOpen(false)} />
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 overflow-hidden"
                       >
-                        My Profile
-                      </NavLink>
-                      <NavLink
-                        to="/dashboard"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() => setProfileDropdownOpen(false)}
-                      >
-                        Dashboard
-                      </NavLink>
-                      <NavLink
-                        to="/my-clubs"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() => setProfileDropdownOpen(false)}
-                      >
-                        My Clubs
-                      </NavLink>
-                      <div className="border-t border-gray-100 mt-2 pt-2">
-                        <button
-                          onClick={handleSignout}
-                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                        >
-                          Log Out
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
+                        <div className="px-5 py-4 bg-gray-50/50 mb-2">
+                          <p className="text-sm font-black text-gray-900 leading-none">{user.displayName || "Member"}</p>
+                          <p className="text-xs text-gray-500 mt-1 truncate">{user.email}</p>
+                        </div>
+                        
+                        <DropdownItem to="/profile" icon={<FaUser />} label="My Profile" onClick={() => setProfileDropdownOpen(false)} />
+                        <DropdownItem to="/dashboard" icon={<FaLayout />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />
+                        <DropdownItem to="/my-clubs" icon={<FaUsers />} label="My Clubs" onClick={() => setProfileDropdownOpen(false)} />
+                        
+                        <div className="mt-2 pt-2 border-t border-gray-100 px-2">
+                          <button
+                            onClick={handleSignout}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold"
+                          >
+                            <FaSignOutAlt /> Log Out
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
-              <>
-                <NavLink
-                  to="/login"
-                  className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
-                >
+              <div className="flex items-center gap-2">
+                <Link to="/login" className="px-5 py-2 text-sm font-bold text-gray-700 hover:text-primary transition-colors">
                   Log In
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  className="px-5 py-2 text-sm font-semibold text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors"
-                >
-                  Sign Up
-                </NavLink>
-              </>
+                </Link>
+                <Link to="/register" className="px-6 py-2.5 text-sm font-bold text-white bg-primary rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all active:translate-y-0">
+                  Join Community
+                </Link>
+              </div>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Trigger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-xl bg-gray-100 text-gray-900 transition-all active:scale-90"
           >
-            {mobileMenuOpen ? (
-              <FaTimes className="w-6 h-6" />
-            ) : (
-              <FaBars className="w-6 h-6" />
-            )}
+            {mobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
           </button>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
+      {/* Mobile Menu Overhaul */}
+      <AnimatePresence>
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 py-4">
-            <nav className="flex flex-col space-y-1">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                      isActive
-                        ? "text-gray-900 bg-gray-100"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                    }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </nav>
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden bg-white border-t border-gray-100 overflow-hidden"
+          >
+            <div className="px-6 py-8 space-y-6">
+              <nav className="flex flex-col gap-4">
+                {navLinks.map((link) => (
+                  <NavLink key={link.to} to={link.to} onClick={() => setMobileMenuOpen(false)} className="text-2xl font-black text-gray-900">
+                    {link.label}
+                  </NavLink>
+                ))}
+              </nav>
 
-            {/* Mobile Auth Section */}
-            <div className="mt-4 z-40 pt-4 border-t border-gray-200">
-              {user ? (
-                <div>
-                  <div className="flex items-center gap-3 px-4 py-3 mb-2">
-                    <img
-                      src={
-                        user?.photoURL ||
-                        "https://images.unsplash.com/photo-1747592771443-e15f155b1faf?w=100&h=100&fit=crop"
-                      }
-                      alt={user.displayName || "User"}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
-                    />
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">
-                        {user.displayName || "User"}
-                      </p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+              <div className="pt-6 border-t border-gray-100">
+                {user ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      <img src={user?.photoURL} className="w-12 h-12 rounded-full border-2 border-primary" alt="User" />
+                      <div>
+                        <p className="font-bold text-gray-900">{user.displayName}</p>
+                        <button onClick={handleSignout} className="text-sm text-red-500 font-bold">Logout Account</button>
+                      </div>
                     </div>
                   </div>
-                  <NavLink
-                    to="/profile"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    My Profile
-                  </NavLink>
-                  <NavLink
-                    to="/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    Dashboard
-                  </NavLink>
-                  <NavLink
-                    to="/my-clubs"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    My Clubs
-                  </NavLink>
-                  <button
-                    onClick={() => {
-                      handleSignout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 mt-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    Log Out
-                  </button>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2 px-4">
-                  <NavLink
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-center px-4 py-2 text-sm font-semibold text-gray-700 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Log In
-                  </NavLink>
-                  <NavLink
-                    to="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-center px-4 py-2 text-sm font-semibold text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors"
-                  >
-                    Sign Up
-                  </NavLink>
-                </div>
-              )}
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn btn-outline border-gray-300 rounded-xl">Login</Link>
+                    <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary rounded-xl">Register</Link>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </header>
   );
 };
+
+const DropdownItem = ({ to, icon, label, onClick }) => (
+  <NavLink 
+    to={to} 
+    onClick={onClick}
+    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:text-primary hover:bg-primary/5 mx-2 rounded-xl transition-all font-semibold"
+  >
+    <span className="text-gray-400">{icon}</span>
+    {label}
+  </NavLink>
+);
 
 export default Header;

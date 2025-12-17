@@ -1,176 +1,169 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
+import { motion } from "framer-motion";
+import { FaUsers, FaRegLightbulb, FaRocket, FaGlobe, FaTrophy, FaHandshake } from "react-icons/fa";
 
 const AboutPage = () => {
-  const sectionsRef = useRef([]);
-   const featureRefs = useRef([]);
-
-  // Scroll-triggered animation
-  useEffect(() => {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate-fadeInUpVisible");
-        }
-      });
-    },
-    { threshold: 0.2 }
-  );
-
-  sectionsRef.current.forEach((section) => {
-    if (section) observer.observe(section);
-  });
-
-  return () => observer.disconnect();
-}, []);
-useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-fadeInUpVisible");
-            observer.unobserve(entry.target); // stop observing after visible
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-
-    featureRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const stats = [
+    { label: "Active Clubs", value: "500+", icon: <FaRocket /> },
+    { label: "Happy Members", value: "25k+", icon: <FaUsers /> },
+    { label: "Events Hosted", value: "1,200+", icon: <FaTrophy /> },
+  ];
 
   const features = [
     {
       title: "Find Clubs Easily",
       text: "Discover clubs that match your interests in just a few clicks.",
+      icon: <FaGlobe className="text-primary text-3xl" />,
     },
     {
       title: "Manage Memberships",
-      text: "Keep track of your memberships, payments, and event registrations effortlessly.",
+      text: "Keep track of your memberships and events registrations effortlessly.",
+      icon: <FaHandshake className="text-secondary-focus text-3xl" />,
     },
     {
       title: "Engage & Connect",
       text: "Join events, meet like-minded people, and grow your network.",
+      icon: <FaRegLightbulb className="text-accent text-3xl" />,
     },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+  };
 
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.6 } },
+  };
 
   return (
-    <section className="bg-secondary dark:bg-neutral min-h-screen text-gray-800 dark:text-white py-16 px-4">
-      {/* Header */}
-      <div
-        ref={(el) => (sectionsRef.current[0] = el)}
-        className="max-w-5xl mx-auto text-center mb-16 opacity-0 transition-all duration-1000"
-      >
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-black dark:text-accent">
-          About ClubSphere
-        </h1>
-        <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300">
-          Connecting communities, empowering clubs, and creating unforgettable experiences for everyone.
-        </p>
-      </div>
-
-      {/* Mission & Vision */}
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 mb-16">
-        <div
-          ref={(el) => (sectionsRef.current[1] = el)}
-          className="bg-primary dark:bg-blue-900 rounded-xl p-8 shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl opacity-0"
+    <div className="bg-base-100 min-h-screen overflow-hidden">
+      {/* 1. Hero Section with Gradient Background */}
+      <section className="relative py-24 bg-gradient-to-br from-primary/20 via-base-100 to-secondary/20">
+        <motion.div 
+          initial={{ opacity: 0, y: -30 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="max-w-5xl mx-auto text-center px-6"
         >
-          <h2 className="text-2xl font-semibold mb-4 text-black dark:text-accent">
-            Our Mission
-          </h2>
-          <p className="text-gray-700 dark:text-gray-200">
-            ClubSphere aims to unite people through clubs, events, and shared interests. We make it simple for members to find the perfect club, participate in events, and engage with like-minded communities.
+          <span className="badge badge-outline badge-primary px-4 py-3 mb-6 font-bold tracking-widest uppercase">Our Story</span>
+          <h1 className="text-5xl md:text-7xl font-black text-base-content mb-6 tracking-tight">
+            Building the <span className="text-primary">Future</span> of Community.
+          </h1>
+          <p className="text-xl opacity-70 max-w-2xl mx-auto leading-relaxed">
+            ClubSphere is more than a platform; it's a digital ecosystem designed to bring people together and empower local leaders.
           </p>
-        </div>
-        <div
-          ref={(el) => (sectionsRef.current[2] = el)}
-          className="bg-info dark:bg-blue-800 rounded-xl p-8 shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-2xl opacity-0"
-        >
-          <h2 className="text-2xl font-semibold mb-4 text-black dark:text-accent">
-            Our Vision
-          </h2>
-          <p className="text-gray-700 dark:text-gray-200">
-            We envision a world where everyone has access to vibrant communities, where collaboration and connection create meaningful experiences for all.
-          </p>
-        </div>
-      </div>
+        </motion.div>
+      </section>
 
-      
-     {/* Features Section */}
- <div className="max-w-6xl mx-auto mb-16">
-      <h2 className="text-3xl font-bold mb-8 text-center text-black dark:text-accent opacity-0 transition-all duration-1000"
-          ref={(el) => featureRefs.current.push(el)}
-      >
-        Why Choose ClubSphere?
-      </h2>
-      <div className="grid md:grid-cols-3 gap-8 text-center">
-        {features.map((feature, index) => (
-          <div
-            key={index}
-            ref={(el) => featureRefs.current.push(el)}
-            className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow transform transition duration-500 hover:scale-105 hover:shadow-2xl opacity-0"
-          >
-            <h3 className="text-xl font-semibold mb-2 text-black dark:text-accent">
-              {feature.title}
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300">{feature.text}</p>
+      {/* 2. Stats Section - Professional Credibility */}
+      <section className="max-w-6xl mx-auto -mt-12 px-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {stats.map((stat, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="card bg-base-100 shadow-xl p-8 flex flex-row items-center gap-6 border border-primary/10"
+            >
+              <div className="text-4xl text-primary">{stat.icon}</div>
+              <div>
+                <h4 className="text-3xl font-black">{stat.value}</h4>
+                <p className="opacity-60 font-medium uppercase text-xs tracking-widest">{stat.label}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. Mission & Vision - Split Content */}
+      <section className="py-24 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <motion.div 
+          initial={{ x: -50, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          className="space-y-6"
+        >
+          <h2 className="text-4xl font-bold">Driven by Purpose, <br/>Led by Community</h2>
+          <p className="text-lg opacity-70">
+            Our mission is simple: to unite people. We believe that technology should serve to strengthen real-world connections, not replace them.
+          </p>
+          <div className="collapse collapse-plus bg-secondary/10 rounded-2xl">
+            <input type="radio" name="my-accordion-3" defaultChecked /> 
+            <div className="collapse-title text-xl font-bold">Our Core Philosophy</div>
+            <div className="collapse-content">
+              <p>We prioritize transparency, user safety, and the growth of grassroots organizations across the globe.</p>
+            </div>
           </div>
-        ))}
-      </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        .animate-fadeInUpVisible {
-          opacity: 1 !important;
-          transform: translateY(0px) !important;
-          transition: all 0.8s ease-out;
-        }
-        .opacity-0 {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-      `}</style>
-    </div>
-
-
-      {/* Call to Action */}
-      <div
-        ref={(el) => (sectionsRef.current[4] = el)}
-        className="max-w-3xl mx-auto text-center opacity-0"
-      >
-        <h2 className="text-3xl font-bold mb-6 text-black dark:text-accent">
-          Ready to Join the Community?
-        </h2>
-        <p className="mb-6 text-gray-700 dark:text-gray-300">
-          Sign up today and explore a world of clubs and events designed just for you.
-        </p>
-        <a
-          href="/clubs"
-          className="btn btn-primary btn-lg px-8 py-3 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+        </motion.div>
+        
+        <motion.div 
+          initial={{ x: 50, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          className="relative"
         >
-          Get Started
-        </a>
-      </div>
+          <div className="bg-primary/20 w-full h-80 rounded-[3rem] absolute -rotate-6 scale-105"></div>
+          <img 
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" 
+            className="rounded-[3rem] shadow-2xl relative z-10 w-full h-80 object-cover" 
+            alt="Teamwork" 
+          />
+        </motion.div>
+      </section>
 
-      {/* Animations CSS */}
-      <style jsx>{`
-        .animate-fadeInUpVisible {
-          opacity: 1 !important;
-          transform: translateY(0px) !important;
-          transition: all 0.8s ease-out;
-        }
-        .opacity-0 {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-      `}</style>
-    </section>
+      {/* 4. Features Section - Grid of Values */}
+      <section className="bg-secondary/5 py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">Why Choose ClubSphere?</h2>
+            <div className="h-1 w-20 bg-primary mx-auto rounded-full"></div>
+          </div>
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-3 gap-8"
+          >
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="card bg-base-100 p-10 shadow-lg border-b-4 border-primary hover:shadow-2xl transition-all group"
+              >
+                <div className="mb-6 transform group-hover:scale-110 transition-transform">{feature.icon}</div>
+                <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
+                <p className="opacity-70 leading-relaxed">{feature.text}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 5. Modern Call to Action */}
+      <section className="py-24 px-6">
+        <motion.div 
+          whileHover={{ scale: 1.02 }}
+          className="max-w-5xl mx-auto bg-neutral text-neutral-content p-12 md:p-20 rounded-[4rem] text-center relative overflow-hidden"
+        >
+          {/* Background Decorative Circles */}
+          <div className="absolute top-0 left-0 w-64 h-64 bg-primary/20 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          
+          <h2 className="text-4xl md:text-5xl font-black mb-8 relative z-10">
+            Ready to Find Your <span className="text-primary">Tribe?</span>
+          </h2>
+          <p className="text-xl mb-10 opacity-80 max-w-xl mx-auto relative z-10">
+            Join thousands of others who have already found their community. Your next adventure starts here.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 relative z-10">
+            <a href="/clubs" className="btn btn-primary btn-lg rounded-full px-12 text-lg">Explore Clubs</a>
+            <a href="/register" className="btn btn-outline btn-lg rounded-full px-12 text-white border-white hover:bg-white hover:text-black">Join Now</a>
+          </div>
+        </motion.div>
+      </section>
+    </div>
   );
 };
 

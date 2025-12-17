@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import axiosPublic from "../../api/axiosPublic";
-import { FaCalendarAlt, FaUsers, FaMapMarkerAlt } from "react-icons/fa";
+import { FaUsers, FaMapMarkerAlt, FaArrowRight, FaClock } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Loading from "../../Components/Loading";
 
@@ -14,133 +14,121 @@ const UpcomingEventsTimeline = () => {
     },
   });
 
-  if (isLoading) {
-    return <Loading/>;
-  }
+  if (isLoading) return <Loading />;
 
-  const upcomingEvents = events.filter(
-    (event) => new Date(event.eventDate) > new Date()
-  );
-
-  const upcoming = upcomingEvents.slice(0,6)
+  const upcoming = events
+    .filter((event) => new Date(event.eventDate) > new Date())
+    .slice(0, 6);
 
   return (
-    <div className="max-w-6xl bg-primary mx-auto px-6 py-20">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-16">
-        <h2 className="text-4xl font-bold text-black">
-          Find Out Ongoing Events This Week
-        </h2>
-        <Link
-          to="/events"
-          className="text-gray-700 font-semibold hover:underline"
-        >
-          SEE ALL EVENTS →
-        </Link>
+    <section className="relative bg-slate-50 overflow-hidden py-24">
+      {/* Background Decorative Element */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-40 pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Timeline Container */}
-      <div className="relative">
-        {/* Vertical Line */}
-        <div className="absolute left-1/2 top-0 h-full w-[2px] bg-gray-400 -translate-x-1/2" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Header Area */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
+          <div className="max-w-2xl">
+            <h2 className="text-5xl font-black text-slate-900 tracking-tight mb-4">
+              Weekly <span className="text-primary">Event</span> Briefing
+            </h2>
+            <p className="text-lg text-slate-600">
+              Stay ahead of the curve. Join the most influential workshops and 
+              gatherings happening in your community this week.
+            </p>
+          </div>
+          <Link
+            to="/events"
+            className="group flex items-center gap-2 font-bold text-primary hover:text-slate-900 transition-colors uppercase tracking-widest text-sm"
+          >
+            Explore All Events <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
+          </Link>
+        </div>
 
-        <div className="space-y-20">
-          {upcoming.map((event, index) => (
-            <motion.div
-              key={event._id}
-              initial={{ opacity: 0, x: 120 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="relative grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
-            >
-              {/* Date Box (Left) */}
-              <div className="lg:text-right lg:pr-16">
-                <div className="inline-block bg-purple-300 text-white px-6 py-4 rounded-xl">
-                  <p className="font-semibold">
-                    {new Date(event.eventDate).toLocaleDateString("en-US", {
-                      weekday: "long",
-                    })}
-                  </p>
-                  <p className="text-sm opacity-90">
-                    {new Date(event.eventDate).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
+        {/* Timeline Implementation */}
+        <div className="relative">
+          {/* Central Vertical Line */}
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/50 via-secondary/50 to-transparent -translate-x-1/2" />
 
-              {/* Timeline Dot */}
-              <span className="absolute left-1/2 top-6 w-5 h-5 bg-white border-4 border-primary rounded-full -translate-x-1/2 z-10" />
+          <div className="space-y-16 md:space-y-24">
+            {upcoming.map((event, index) => {
+              const isEven = index % 2 === 0;
+              return (
+                <motion.div
+                  key={event._id}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.8, delay: index * 0.1 }}
+                  className={`relative flex flex-col md:flex-row items-center justify-between ${
+                    isEven ? "md:flex-row-reverse" : ""
+                  }`}
+                >
+                  {/* 1. Date Indicator Section */}
+                  <div className="w-full md:w-[45%] mb-8 md:mb-0">
+                    <div className={`${!isEven ? "md:text-right" : "md:text-left"}`}>
+                      <div className="inline-flex flex-col bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-100">
+                        <span className="bg-primary text-white px-6 py-2 text-xs font-black uppercase tracking-tighter">
+                          {new Date(event.eventDate).toLocaleDateString("en-US", { weekday: "long" })}
+                        </span>
+                        <div className="px-6 py-4">
+                           <p className="text-3xl font-black text-slate-900">
+                             {new Date(event.eventDate).getDate()}
+                           </p>
+                           <p className="text-xs font-bold text-slate-400 uppercase">
+                             {new Date(event.eventDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                           </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-              {/* Event Card (Right) */}
-              <div className="bg-white p-8 rounded-2xl shadow-md  max-w-xl">
-                <p className="text-sm text-gray-500 mb-2">
-                  09:00 AM – 05:00 PM
-                </p>
+                  {/* 2. Central Dot */}
+                  <div className="absolute left-4 md:left-1/2 w-10 h-10 bg-white border-4 border-primary rounded-full -translate-x-1/2 z-20 shadow-lg hidden md:flex items-center justify-center">
+                    <div className="w-2 h-2 bg-primary rounded-full animate-ping" />
+                  </div>
 
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  {event.title}
-                </h3>
+                  {/* 3. Event Details Card */}
+                  <div className="w-full md:w-[45%] pl-12 md:pl-0">
+                    <div className="group bg-white p-8 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 hover:border-primary/30 transition-all duration-500">
+                      <div className="flex items-center gap-4 text-xs font-bold text-slate-400 mb-4 uppercase tracking-widest">
+                        <span className="flex items-center gap-1 text-primary"><FaClock /> 09:00 AM</span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1"><FaMapMarkerAlt className="text-red-400" /> {event.location}</span>
+                      </div>
 
-                <p className="text-gray-600 mb-4">
-                  {event.description}
-                </p>
+                      <h3 className="text-2xl font-black text-slate-900 mb-4 group-hover:text-primary transition-colors">
+                        {event.title}
+                      </h3>
 
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
-                  <span className="flex items-center gap-2">
-                    <FaMapMarkerAlt  className="text-red-400"/>
-                    {event.location}
-                  </span>
+                      <p className="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
+                        {event.description}
+                      </p>
 
-                  {event.maxAttendees && (
-                    <span className="flex items-center gap-2">
-                      <FaUsers />
-                      Max {event.maxAttendees} participants
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-6">
-                  <Link
-                    to={`/eventDetails/${event._id}`}
-                    className="btn btn-info rounded-full px-8"
-                  >
-                    Join Event
-                  </Link>
-
-                  <Link
-                    to={`/eventDetails/${event._id}`}
-                    className="text-warning font-semibold hover:underline"
-                  >
-                    More Detail →
-                  </Link>
-                   
-                </div>
-                <div className="rounded-2xl overflow-hidden shadow-xl border-4 border-white dark:border-gray-800 h-[300px] bg-secondary/20 flex items-center justify-center">
-  {event.location ? (
-    <iframe
-      title="Event Location"
-      src={`https://www.google.com/maps?q=${encodeURIComponent(
-          event.location
-        )}&output=embed`}
-      width="100%"
-      height="80%"
-      className="" // Optional "pro" styling
-      style={{ border: 0 }}
-      allowFullScreen=""
-      loading="lazy"
-    />
-  ) : (
-    <div className="text-center p-4">
-      <p className="text-sm opacity-50">Map location not provided</p>
-    </div>
-  )}
-</div>
-              </div>
-            </motion.div>
-          ))}
+                      <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                        <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
+                          <FaUsers className="text-primary" />
+                          <span>{event.maxAttendees || "50+"} Spots</span>
+                        </div>
+                        <Link
+                          to={`/eventDetails/${event._id}`}
+                          className="px-6 py-3 bg-slate-900 text-white text-xs font-black rounded-xl hover:bg-primary transition-all shadow-lg shadow-slate-900/20 active:scale-95"
+                        >
+                          JOIN NOW
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
