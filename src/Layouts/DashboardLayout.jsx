@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import useRole from '../hooks/useRole';
-import Logo from '../Components/LOgo';
 import { 
   CalendarClock, ChartNetwork, CircleDollarSign, Home, 
   LayoutDashboard, Pickaxe, Puzzle, Shovel, Sidebar, 
@@ -9,6 +8,7 @@ import {
   ToolCase
 } from 'lucide-react';
 import { Tooltip } from 'recharts';
+import AnimLogo from '../Components/AnimLogo';
 
 const DashboardLayout = () => {
     const { role } = useRole();
@@ -34,7 +34,7 @@ const DashboardLayout = () => {
                     </div>
                     
                     <div className="flex-1 flex items-center gap-3 ml-2 lg:ml-0">
-                        <span className="text-slate-300 hidden md:block"><Logo /></span>
+                        <span className="text-slate-300 hidden md:block"><AnimLogo/></span>
                         <ChevronRight className="w-4 h-4 text-slate-300 hidden md:block" />
                         <h2 className="font-bold text-slate-800 tracking-tight">
                             {getPathTitle()}

@@ -6,7 +6,8 @@ import { FaBars, FaTimes, FaUser, FaChevronDown,  FaUsers, FaSignOutAlt } from "
 import { CgLayoutPin } from "react-icons/cg";
 import { motion, AnimatePresence } from "framer-motion";
 import { LucideLayoutDashboard } from "lucide-react";
-import LOgo from "./LOgo";
+
+import AnimLogo from "./AnimLogo";
 
 const Header = () => {
   const { user, signOutUser } = useContext(AuthContext);
@@ -45,7 +46,7 @@ const Header = () => {
           
           {/* Logo Section */}
           <div className="flex-shrink-0 scale-110">
-            <LOgo />
+          <AnimLogo/>
           </div>
 
           {/* Desktop Navigation - Animated Underline */}

@@ -10,7 +10,7 @@ import {
   FaMapMarkerAlt,
   FaPaperPlane
 } from "react-icons/fa";
-import LOgo from "./LOgo";
+import AnimLogo from "./AnimLogo";
 
 
 const Footer = () => {
@@ -41,7 +41,7 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <LOgo />
+             <AnimLogo/>
             </div>
             <p className="text-slate-400 leading-relaxed mb-8">
               The premier platform for community discovery. We help you find your 

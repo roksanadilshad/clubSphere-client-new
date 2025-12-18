@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-
-const LOgo = () => {
+const AnimLogo = () => {
     return (
         <div>
+            <div>
             <Link to="/" className="flex items-center gap-2.5 group">
       {/* 1. Icon Container */}
       <div className="relative flex items-center justify-center w-10 h-10 overflow-hidden rounded-xl bg-gradient-to-tr from-warning to-primary shadow-sm group-hover:shadow-primary/30 group-hover:shadow-lg transition-all duration-500 group-hover:-rotate-3">
@@ -43,7 +43,8 @@ const LOgo = () => {
       </div>
     </Link>
         </div>
+        </div>
     );
 };
 
-export default LOgo;
+export default AnimLogo;
