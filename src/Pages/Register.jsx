@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { imageUpload } from "../utils";
 import { saveUser } from "../api/saveUser";
 import { auth } from "../firebase/firebase.init";
+import Loading from "../Components/Loading";
 
 const Registration = () => {
   const { createUser, setUser, signInWithGoogle, updateUserProfile, loading } = useContext(AuthContext);
@@ -76,6 +77,7 @@ const Registration = () => {
     }
   };
 
+  if(loading) return <Loading/>
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4 md:p-12 relative overflow-hidden">
       {/* Decorative background elements */}

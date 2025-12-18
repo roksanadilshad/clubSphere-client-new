@@ -24,8 +24,8 @@
 }
 
 [data-theme="dark"] {
-  --color-primary: #092635;
-  --color-secondary: #5C8374;
+  --color-primary: #5C8374;
+  --color-secondary: #092635;
   --color-accent: #1B4242;
   --color-neutral: #9EC8B9;
 }
@@ -38,9 +38,9 @@
   color: var(--color-text);
 } */
 
-.card {
+/* .card {
   background-color: var(--color-secondary);
-}
+} */
 
 /* .btn {
   background-color: var(--color-accent);

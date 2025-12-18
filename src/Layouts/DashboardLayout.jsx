@@ -60,7 +60,7 @@ const DashboardLayout = () => {
                     {/* Sidebar Header */}
                     <div className="p-6 border-b border-slate-50 mb-4">
                         <div className="flex items-center gap-3">
-                            <Logo className="scale-125" />
+                            <AnimLogo className="scale-125" />
                             
                         </div>
                     </div>

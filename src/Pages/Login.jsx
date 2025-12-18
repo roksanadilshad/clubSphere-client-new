@@ -8,7 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 
 import toast from "react-hot-toast";
 import { AuthContext } from "../Context/AuthContext";
-import Loder from "../Components/Loading";
+import Loading from "../Components/Loading";
 
 const Login = () => {
   const { signInUser, signInWithGoogle, loading } = use(AuthContext);
@@ -35,7 +35,7 @@ const Login = () => {
       toast.success("Welcome back to ClubSphere!");
       navigate(from, { replace: true });
     } catch (error) {
-      setErr("Invalid email or password. Please try again.");
+      setErr("Invalid email or password. Please try again.", error);
     }
   };
 
@@ -50,7 +50,7 @@ const Login = () => {
     }
   };
 
-  if (loading) return <Loder />;
+  if (loading) return <Loading/>
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4 md:p-8">
