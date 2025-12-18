@@ -5,19 +5,24 @@ import { FaDownload, FaReceipt, FaFilter, FaArrowRight, FaCreditCard } from "rea
 import axiosSecure from "../../../api/axiosSecure";
 
 const PaymentHistory = () => {
+  
   const { user } = useContext(AuthContext);
   const [typeFilter, setTypeFilter] = useState("all");
 
   const { data: payments = [], isLoading } = useQuery({
-    queryKey: ["paymentHistory", user?.email, typeFilter],
-    enabled: !!user?.email,
-    queryFn: async () => {
-      const response = await axiosSecure.get(
-        `/payments?email=${user?.email}&type=${typeFilter}`
-      );
-      return response.data;
-    },
-  });
+  queryKey: ["paymentHistory", user?.email, typeFilter],
+  // STRICT CHECK: only run if user email AND the token exists in storage
+  enabled: !!user?.email && !!localStorage.getItem('access-token'), 
+  queryFn: async () => {
+    const response = await axiosSecure.get(
+      `/payments?email=${user?.email}&type=${typeFilter}`
+    );
+    return response.data;
+  },
+});
+  console.log("Token being sent:", localStorage.getItem("accessToken"));
+
+  
 
   const totalSpent = payments.reduce((sum, p) => sum + p.amount, 0);
 
@@ -29,6 +34,8 @@ const PaymentHistory = () => {
       </div>
     );
   }
+  console.log(totalSpent);
+  
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8">
