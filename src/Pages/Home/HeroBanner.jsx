@@ -90,7 +90,7 @@ const HeroBanner = () => {
                   <FaTachometerAlt className="mr-2" /> Dashboard
                 </Link>
               ) : (
-                <Link to="/manager" className="cta-secondary">
+                <Link to="/manager" className="cta-secondary flex flex-col items-center">
                   <FaUserTie className="mr-2" /> Be A Manager
                 </Link>
               )}
@@ -146,11 +146,11 @@ const HeroBanner = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      {/* <style jsx>{`
         .cta-secondary {
           @apply inline-flex items-center justify-center px-8 py-4 bg-white/50 backdrop-blur-md text-gray-900 font-bold rounded-2xl border-2 border-gray-900/10 hover:border-gray-900 hover:bg-white transition-all hover:scale-105 active:scale-95 shadow-lg;
         }
-      `}</style>
+      `}</style> */}
     </section>
   );
 };

@@ -1,11 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, NavLink } from "react-router";
 import { AuthContext } from "../Context/AuthContext";
-import Logo from "/Logo";
+
 import { FaBars, FaTimes, FaUser, FaChevronDown,  FaUsers, FaSignOutAlt } from "react-icons/fa";
 import { CgLayoutPin } from "react-icons/cg";
 import { motion, AnimatePresence } from "framer-motion";
 import { LucideLayoutDashboard } from "lucide-react";
+import LOgo from "./LOgo";
 
 const Header = () => {
   const { user, signOutUser } = useContext(AuthContext);
@@ -44,7 +45,7 @@ const Header = () => {
           
           {/* Logo Section */}
           <div className="flex-shrink-0 scale-110">
-            <Logo />
+            <LOgo />
           </div>
 
           {/* Desktop Navigation - Animated Underline */}

@@ -10,7 +10,8 @@ import {
   FaMapMarkerAlt,
   FaPaperPlane
 } from "react-icons/fa";
-import Logo from "/Logo";
+import LOgo from "./LOgo";
+
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -40,7 +41,7 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <Logo />
+              <LOgo />
             </div>
             <p className="text-slate-400 leading-relaxed mb-8">
               The premier platform for community discovery. We help you find your 
