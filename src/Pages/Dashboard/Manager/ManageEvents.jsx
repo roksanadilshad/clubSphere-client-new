@@ -89,7 +89,7 @@ const ManageEvents = () => {
         </div>
         <Link
           to="/dashboard/manager/events/create"
-          className="btn btn-primary shadow-lg shadow-blue-200 rounded-2xl normal-case h-14 px-8"
+          className="btn btn-primary text-gray-700 shadow-lg shadow-blue-200 rounded-2xl normal-case h-14 px-8"
         >
           <FaPlus />
           Create New Event

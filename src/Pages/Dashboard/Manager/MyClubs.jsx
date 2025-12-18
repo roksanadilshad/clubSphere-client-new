@@ -159,7 +159,7 @@ const ManageMyClubs = () => {
 
               <div className="mt-auto flex gap-3">
                  <Link to={`/club/${club._id}`} className="flex-1 py-3 rounded-xl border border-slate-200 text-center text-xs font-black text-slate-600 uppercase tracking-widest hover:bg-slate-50 transition-colors">Public Page</Link>
-                 <Link to={`/dashboard/manager/manage-events/${club._id}`} className="flex-1 py-3 rounded-xl bg-slate-100 text-center text-xs font-black text-slate-600 uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Events</Link>
+                 <Link to={`/dashboard/manager/events`} className="flex-1 py-3 rounded-xl bg-slate-100 text-center text-xs font-black text-slate-600 uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Events</Link>
               </div>
             </div>
           </div>
