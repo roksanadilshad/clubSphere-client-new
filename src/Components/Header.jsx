@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, NavLink } from "react-router";
 import { AuthContext } from "../Context/AuthContext";
-import Logo from "./LOgo";
+import Logo from "/Logo";
 import { FaBars, FaTimes, FaUser, FaChevronDown,  FaUsers, FaSignOutAlt } from "react-icons/fa";
 import { CgLayoutPin } from "react-icons/cg";
 import { motion, AnimatePresence } from "framer-motion";
