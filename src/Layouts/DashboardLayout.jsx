@@ -5,7 +5,8 @@ import {
   CalendarClock, ChartNetwork, CircleDollarSign, Home, 
   LayoutDashboard, Pickaxe, Puzzle, Shovel, Sidebar, 
   UserCog, UserRoundPen, Users, ChevronRight, 
-  ToolCase
+  ToolCase,
+  Scissors
 } from 'lucide-react';
 import { Tooltip } from 'recharts';
 import AnimLogo from '../Components/AnimLogo';
@@ -103,6 +104,7 @@ const DashboardLayout = () => {
                             <>
                                 <div className="divider text-[10px] uppercase font-black tracking-widest text-slate-300 my-2">Club Tools</div>
                                 <SidebarLink to="/dashboard/manager/members" icon={<Puzzle size={20}/>} label="Manage Members" />
+                                <SidebarLink to="/dashboard/manager/clubs" icon={<Scissors size={20}/>} label="Manage Clubs" />
                                 <SidebarLink to="/dashboard/manager/events" icon={<ChartNetwork size={20}/>} label="Manage Events" />
                                 <SidebarLink to="/dashboard/manager/create-club" icon={<Pickaxe size={20}/>} label="Create Club" />
                                 <SidebarLink to="/dashboard/manager/events" icon={<ToolCase size={20}/>} label="Create Event" />
