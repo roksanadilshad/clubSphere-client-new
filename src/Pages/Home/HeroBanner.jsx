@@ -37,7 +37,7 @@ const HeroBanner = () => {
   }, [heroSlides.length]);
 
   return (
-    <section className={`relative min-h-[600px] lg:min-h-[700px] transition-colors duration-1000 ${heroSlides[currentSlide].accent} overflow-hidden flex items-center`}>
+    <section className={`relative min-h-[600px] lg:min-h-[700px] transition-colors  duration-1000 ${heroSlides[currentSlide].accent} overflow-hidden flex items-center`}>
       {/* Decorative Background Circles */}
       <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-white/30 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-[-10%] left-[-5%] w-72 h-72 bg-white/20 rounded-full blur-2xl"></div>
@@ -82,11 +82,11 @@ const HeroBanner = () => {
               </Link>
 
               {role === "clubManager" ? (
-                <Link to="/dashboard/manager/create-club" className="cta-secondary">
+                <Link to="/dashboard/manager/create-club" className="cta-secondary flex flex-col items-center">
                   <FaPlus className="mr-2" /> Start a Club
                 </Link>
               ) : role === "admin" ? (
-                <Link to="/dashboard" className="cta-secondary">
+                <Link to="/dashboard" className="cta-secondary flex flex-col items-center">
                   <FaTachometerAlt className="mr-2" /> Dashboard
                 </Link>
               ) : (

@@ -86,7 +86,7 @@ const ContactUs = () => {
             className="lg:col-span-2 card bg-base-100 shadow-2xl border border-primary/10 p-8"
           >
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div className="form-control">
                   <label className="label font-semibold">Name:</label>
                   <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" className="input input-bordered focus:border-primary rounded-2xl ml-2" />

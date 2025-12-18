@@ -8,12 +8,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LucideLayoutDashboard } from "lucide-react";
 
 import AnimLogo from "./AnimLogo";
+import useRole from "../hooks/useRole";
 
 const Header = () => {
   const { user, signOutUser } = useContext(AuthContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const {role} = useRole();
 
   // Handle scroll effect for glassmorphism
   useEffect(() => {
@@ -30,7 +32,8 @@ const Header = () => {
     { to: "/", label: "Home" },
     { to: "/clubs", label: "Clubs" },
     { to: "/events", label: "Events" },
-    { to: "/about", label: "About" },
+    { to: "/about", label: "About us" },
+    { to: "/contact", label: "Contact us" },
   ];
 
   return (

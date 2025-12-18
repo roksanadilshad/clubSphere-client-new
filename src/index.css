@@ -24,10 +24,11 @@
 }
 
 [data-theme="dark"] {
-  --color-primary: #5C8374;
-  --color-secondary: #092635;
-  --color-accent: #1B4242;
-  --color-neutral: #9EC8B9;
+ --color-primary: #D9D7F1;
+ /* --color-primary: ; */
+  --color-secondary: #FFFDDE;
+  --color-info: #E7FBBE;
+  --color-warning: #FFCBCB;
 }
 /* body{
     background-color: #FFFDDE;

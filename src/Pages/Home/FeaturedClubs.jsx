@@ -25,7 +25,7 @@ const FeaturedClubs = () => {
   };
 
   return (
-    <section className="py-24 px-6 bg-base-100 dark:bg-neutral transition-colors duration-500">
+    <section className="py-24 px-6 bg-base-100  transition-colors duration-500">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
