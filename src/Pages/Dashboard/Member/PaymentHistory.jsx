@@ -20,7 +20,7 @@ const PaymentHistory = () => {
     return response.data;
   },
 });
-  console.log("Token being sent:", localStorage.getItem("accessToken"));
+  //console.log("Token being sent:", localStorage.getItem("accessToken"));
 
   
 
@@ -34,7 +34,7 @@ const PaymentHistory = () => {
       </div>
     );
   }
-  console.log(totalSpent);
+  //console.log(totalSpent);
   
 
   return (
