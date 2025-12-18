@@ -49,6 +49,7 @@ import toast from 'react-hot-toast';
 import { AuthContext } from '../../Context/AuthContext';
 import axiosSecure from '../../api/axiosSecure';
 import axiosPublic from '../../api/axiosPublic';
+import Loading from '../../Components/Loading';
 
 
 const ClubDetails = () => {
@@ -261,14 +262,15 @@ const ClubDetails = () => {
   if (!club) {
     return (
       <>
-        <Header />
+      <Loading/>
+        {/* <Header />
         <div className="flex items-center justify-center h-screen bg-gray-50">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Club Not Found</h2>
             <p className="text-gray-600">The club you're looking for doesn't exist.</p>
           </div>
         </div>
-        <Footer />
+        <Footer /> */}
       </>
     );
   }

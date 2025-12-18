@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router';
 import Root from '../Layouts/Root';
-import Home from '../Pages/Home/Home';
+const Home = lazy(() => import('../Pages/Home/Home'));
 import Registration from '../Pages/Register';
 import Login from '../Pages/Login';
 import ErrorPage from '../Pages/ErrorPage';
@@ -19,7 +19,7 @@ import EditClub from '../Pages/Dashboard/Manager/EditClub';
 import Profile from '../Pages/Dashboard/Profile';
 import AdminOverview from '../Pages/Dashboard/Admin/AdminOverview';
 import Clubs from '../Pages/Clubs/Clubs';
-import ClubDetails from '../Pages/Clubs/ClubDetails';
+const ClubDetails = lazy(() => import ('../Pages/Clubs/ClubDetails'));
 import ViewPayments from '../Pages/Dashboard/Admin/ViewPaments';
 import EventRegistrations from '../Pages/Dashboard/Manager/EventRegistrations';
 import ManageUsers from '../Pages/Dashboard/Admin/ManageUsers';
@@ -40,7 +40,13 @@ import ManagerPayments from '../Pages/Dashboard/Manager/ManagerPayments';
 import AboutPage from '../Pages/About';
 import EventsPage from '../Pages/events/Event';
 import ContactUs from '../Pages/Contact';
+import Loading from '../Components/Loading';
 
+// const PageLoader = () => (
+//   <div className="h-screen w-full flex items-center justify-center bg-gray-50">
+//     <span className="loading loading-ring loading-lg text-primary"></span>
+//   </div>
+// );
 
 export const router = createBrowserRouter([
   {
@@ -51,7 +57,9 @@ export const router = createBrowserRouter([
         {
             index: true,
             path:'/',
-            element:<Home></Home>,
+            element:(<Suspense fallback={<Loading />}>
+            <Home />
+          </Suspense>)
         },
         {
           path:'/register',
@@ -67,7 +75,9 @@ export const router = createBrowserRouter([
         },
         {
           path:'/clubDetail/:id' ,
-         element:<ClubDetails></ClubDetails>
+         element:(<Suspense fallback={<Loading />}>
+            <ClubDetails />
+          </Suspense>)
         },
         {
           path:'/events' ,
