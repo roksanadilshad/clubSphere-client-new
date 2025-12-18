@@ -69,7 +69,7 @@ const ClubDetails = () => {
     if (!id) return;
     const fetchClub = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/clubs/${id}`)
+        const res = await axios.get(`https://club-sphere-server-new.vercel.app/clubs/${id}`)
         setClub(res.data)
       } catch (err) {
         setError('Error fetching club details');
@@ -105,7 +105,7 @@ const ClubDetails = () => {
 
     const checkMembership = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/memberships/check',
+        const res = await axios.get('https://club-sphere-server-new.vercel.app/memberships/check',
            {
           params: { 
             userEmail: user.email, 
@@ -172,7 +172,7 @@ const ClubDetails = () => {
     };
 
     const res = await axios.post(
-      "http://localhost:3000/create-checkout-session",
+      "https://club-sphere-server-new.vercel.app/create-checkout-session",
       paymentInfo
     );
 

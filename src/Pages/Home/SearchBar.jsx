@@ -10,7 +10,7 @@ const SearchBar = ({ onResults }) => {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:3000/api/clubs/search", {
+      const res = await axios.get("https://club-sphere-server-new.vercel.app/api/clubs/search", {
         params: { query, category },
       });
       if (onResults) onResults(res.data);

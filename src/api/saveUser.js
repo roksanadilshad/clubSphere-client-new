@@ -6,7 +6,7 @@ export const saveUser = async ( user ) => {
     try{
         if(!user?.email) return;
 
-        await axios.post("http://localhost:3000/users", {
+        await axios.post("https://club-sphere-server-new.vercel.app/users", {
              firebaseUid: user.uid,
     name: user.displayName,
     email: user.email,

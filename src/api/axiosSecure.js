@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:3000", // your server URL
+  baseURL: "https://club-sphere-server-new.vercel.app", // your server URL
 });
 
 // Add a request interceptor to attach Firebase ID token

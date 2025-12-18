@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000", // your server URL
+  baseURL: "https://club-sphere-server-new.vercel.app", // your server URL
 });
 
 // Add token automatically for protected routes
