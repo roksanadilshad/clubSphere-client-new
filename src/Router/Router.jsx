@@ -190,7 +190,7 @@ export const router = createBrowserRouter([
     },
     {
       path: 'admin/status',
-      element: <PrivateRoute allowedRoles={["admin"]}><ManagerStatus></ManagerStatus></PrivateRoute>
+      element: <AdminRoute><ManagerStatus></ManagerStatus></AdminRoute>
     },
     {
       path: 'admin/clubs',

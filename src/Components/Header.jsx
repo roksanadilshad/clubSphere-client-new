@@ -29,12 +29,27 @@ const Header = () => {
   };
 
   const navLinks = [
-    { to: "/", label: "Home" },
-    { to: "/clubs", label: "Clubs" },
-    { to: "/events", label: "Events" },
-    { to: "/about", label: "About us" },
-    { to: "/contact", label: "Contact us" },
-  ];
+  { to: "/", label: "Home" },
+  { to: "/clubs", label: "Clubs" },
+  { to: "/events", label: "Events" },
+  // Conditionally spread links based on role
+  ...(role === "member" 
+    ? [
+        { to: "/manager", label: "Be a manager" },
+        { to: "/dashboard", label: "Dashboard" }
+      ]
+    : role === "clubManager" ? [
+        { to: "/dashboard/manager/create-club", label: "Create Club" },
+        { to: "/dashboard", label: "Dashboard" }
+      ] : role === "admin" ? [
+        { to: "/dashboard/admin/status", label: "Manage Status" },
+        { to: "/dashboard", label: "Dashboard" }
+      ] : [
+        { to: "/about", label: "About us" },
+        { to: "/contact", label: "Contact us" }
+      ]
+  )
+];
 
   return (
     <header 

@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FaRocket, FaCompass } from "react-icons/fa";
+import { use } from "react";
+import { AuthContext } from "../../Context/AuthContext";
 
 const CTASection = () => {
+  const {user} = use(AuthContext)
   return (
     <section className="relative py-24 px-6 overflow-hidden">
       {/* High-End Gradient Background */}
@@ -45,13 +48,24 @@ const CTASection = () => {
             transition={{ delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-6 justify-center items-center"
           >
-            <Link
+            {
+              user ? (<Link
+              to="/events"
+              className="group relative inline-flex items-center gap-3 px-10 py-5 bg-primary text-white font-black rounded-2xl hover:scale-105 transition-all shadow-xl shadow-primary/20"
+            >
+              <FaRocket className="group-hover:rotate-12 transition-transform" />
+              Explore Events
+            </Link>) : (
+          <Link
               to="/register"
               className="group relative inline-flex items-center gap-3 px-10 py-5 bg-primary text-white font-black rounded-2xl hover:scale-105 transition-all shadow-xl shadow-primary/20"
             >
               <FaRocket className="group-hover:rotate-12 transition-transform" />
               Get Started for Free
             </Link>
+              )
+            }
+            
 
             <Link
               to="/clubs"

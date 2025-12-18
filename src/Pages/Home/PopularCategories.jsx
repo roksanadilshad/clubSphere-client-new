@@ -7,11 +7,11 @@ import { useNavigate } from "react-router";
 
 const categories = [
   { name: "Sports & Fitness", count: 124, color: "bg-emerald-50", icon: <FaFutbol />, accent: "text-emerald-600", border: "hover:border-emerald-200" },
-  { name: "Arts & Culture", count: 85, color: "bg-indigo-50", icon: <FaPalette />, accent: "text-indigo-600", border: "hover:border-indigo-200" },
-  { name: "Technology", count: 210, color: "bg-rose-50", icon: <FaMicrochip />, accent: "text-rose-600", border: "hover:border-rose-200" },
+  { name: "Arts", count: 85, color: "bg-indigo-50", icon: <FaPalette />, accent: "text-indigo-600", border: "hover:border-indigo-200" },
+  { name: "Tech", count: 210, color: "bg-rose-50", icon: <FaMicrochip />, accent: "text-rose-600", border: "hover:border-rose-200" },
   { name: "Music", count: 96, color: "bg-amber-50", icon: <FaMusic />, accent: "text-amber-600", border: "hover:border-amber-200" },
-  { name: "Food & Drink", count: 150, color: "bg-orange-50", icon: <FaUtensils />, accent: "text-orange-600", border: "hover:border-orange-200" },
-  { name: "Outdoor", count: 72, color: "bg-sky-50", icon: <FaCampground />, accent: "text-sky-600", border: "hover:border-sky-200" },
+  { name: "Food", count: 150, color: "bg-orange-50", icon: <FaUtensils />, accent: "text-orange-600", border: "hover:border-orange-200" },
+  { name: "Health", count: 72, color: "bg-sky-50", icon: <FaCampground />, accent: "text-sky-600", border: "hover:border-sky-200" },
 ];
 
 const PopularCategories = () => {
