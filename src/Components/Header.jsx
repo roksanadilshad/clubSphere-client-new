@@ -202,7 +202,7 @@ const Header = () => {
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
-                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn btn-outline border-gray-300 rounded-xl">Login</Link>
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn text-gray-700 btn-outline border-gray-300 rounded-xl">Login</Link>
                     <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary rounded-xl">Register</Link>
                   </div>
                 )}

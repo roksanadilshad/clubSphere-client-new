@@ -5,6 +5,10 @@ An advanced, full-stack management platform designed to streamline club operatio
 ### 🔗 [Live Deployment URL](https://club-sphere-client-new-62n4.vercel.app/)
 
 ---
+ 
+### Admin
+Email: hellokity@gmail.com
+Password: hE#0kIt*
 
 ## 🚀 Project Purpose
 The primary goal of Club Sphere is to bridge the gap between club organizers and members. It automates the heavy lifting of management—handling memberships, event registrations, and revenue tracking—allowing club managers to focus on building their communities while ensuring administrators have total visibility over platform health and security.
