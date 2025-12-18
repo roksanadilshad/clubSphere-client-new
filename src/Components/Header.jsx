@@ -27,6 +27,7 @@ const Header = () => {
   const handleSignout = () => {
     signOutUser().then(() => setProfileDropdownOpen(false));
   };
+  
 
   const navLinks = [
   { to: "/", label: "Home" },

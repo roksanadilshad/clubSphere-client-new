@@ -4,18 +4,23 @@ import { FaBuilding, FaUsers, FaCalendarAlt, FaDollarSign, FaArrowUp } from "rea
 import { Link } from "react-router";
 import axiosSecure from "../../../api/axiosSecure";
 import { AuthContext } from "../../../Context/AuthContext";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const ManagerOverview = () => {
   const { user } = useContext(AuthContext);
+  
 
-  const { data: stats, isLoading, isError, error } = useQuery({
+ const { data: stats, isLoading, isError, error } = useQuery({
     queryKey: ["managerStats", user?.email],
+    // Only run if user.email exists AND we aren't in a middle-state
+    enabled: !!user?.email, 
     queryFn: async () => {
-      const response = await axiosSecure.get(`/manager/stats?email=${user.email}`);
-      return response.data;
+        // You can actually stop sending the email in the query string 
+        // if you update the backend to just use req.decoded.email
+        const response = await axiosSecure.get(`/manager/stats?email=${user.email}`);
+        return response.data;
     },
-    enabled: !!user?.email,
-  });
+});
 
   const summaryCards = [
     {

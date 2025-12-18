@@ -43,17 +43,26 @@ const AuthProvider = ({children}) => {
   setUser(auth.currentUser);
     }
 
-    useEffect(()=>{
-            const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser);
-     
-        setLoading(false);
-      });
-       return () =>{
-        unsubscribe();
-      } 
-    }, [])
+    useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+        setUser(currentUser); // Set user first
+        
+        if (currentUser) {
+            try {
+                const token = await currentUser.getIdToken(true); 
+                localStorage.setItem('accessToken', token);
+            } catch (error) {
+                console.error("Token error:", error);
+            }
+        } else {
+            localStorage.removeItem('accessToken');
+        }
 
+        // --- CRITICAL FIX: STOP LOADING ---
+        setLoading(false); 
+    });
+    return () => unsubscribe();
+}, []);
     const authInfo = {
         loading,
         user,

@@ -10,6 +10,8 @@ const MyEvents = () => {
   const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState("upcoming");
 
+  console.log(user);
+  
   const { data: events = [], isLoading } = useQuery({
     queryKey: ["myEvents", user?.email],
     enabled: !!user?.email,
@@ -18,6 +20,7 @@ const MyEvents = () => {
       return response.data;
     },
   });
+
 
   // Precise filtering logic
   const now = new Date();
