@@ -37,7 +37,7 @@ const MyEvents = () => {
     );
   }
 //console.log(events);
-console.log(displayedEvents);
+//console.log(displayedEvents);
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8 min-h-screen">
@@ -136,9 +136,9 @@ console.log(displayedEvents);
                         </span>
                        )}
                     </div>
-                    <Link to={`/eventDetails/${event._id}`} className="text-slate-300 hover:text-blue-600 transition-colors">
+                    {/* <Link to={`/eventDetails/${event.id}`} className="text-slate-300 hover:text-blue-600 transition-colors">
                        <FaArrowRight />
-                    </Link>
+                    </Link> */}
                   </div>
                 </div>
               </div>

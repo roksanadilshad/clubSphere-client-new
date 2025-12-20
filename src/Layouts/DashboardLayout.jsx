@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import useRole from '../hooks/useRole';
 import { 
@@ -10,16 +10,22 @@ import {
 } from 'lucide-react';
 import { Tooltip } from 'recharts';
 import AnimLogo from '../Components/AnimLogo';
+import { AuthContext } from '../Context/AuthContext';
 
 const DashboardLayout = () => {
     const { role } = useRole();
     const location = useLocation();
+    const {user, signOutUser} = use(AuthContext);
 
     // Utility to get a readable title based on path
     const getPathTitle = () => {
         const path = location.pathname.split('/').pop();
         return path.charAt(0).toUpperCase() + path.slice(1) || 'Overview';
     };
+
+     const handleSignout = () => {
+    signOutUser()
+  };
 
     return (
         <div className="drawer lg:drawer-open bg-slate-50 min-h-screen">
@@ -43,8 +49,11 @@ const DashboardLayout = () => {
                     </div>
 
                     <div className="flex-none gap-2">
+                        <div>
+                        <button onClick={handleSignout} className="text-sm btn btn-primary text-white  font-bold hover:btn">Logout</button>
+                      </div>
                         {/* Profile/Notifications would go here */}
-                        <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200"></div>
+                        {/* <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200"></div> */}
                     </div>
                 </nav>
 
