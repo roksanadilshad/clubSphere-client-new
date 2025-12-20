@@ -53,9 +53,9 @@ The primary goal of Club Sphere is to bridge the gap between club organizers and
 
 ## 🛠️ Local Installation
 
-1.  **Clone the Repository:**
+1.  **Clone the Reposi
     ```bash
-    git clone [https://github.com/your-username/club-sphere.git](https://github.com/your-username/club-sphere.git)
+    git clone [https://github.com/roksanadilshad/clubSphere-client-new.git](https://github.com/roksanadilshad/clubSphere-client-new.git)
     ```
 
 2.  **Install Dependencies:**
