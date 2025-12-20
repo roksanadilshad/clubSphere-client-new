@@ -37,14 +37,14 @@ const Header = () => {
   ...(role === "member" 
     ? [
         { to: "/manager", label: "Be a manager" },
-        { to: "/dashboard", label: "Dashboard" }
+        { to: "/dashboard/member", label: "Dashboard" }
       ]
     : role === "clubManager" ? [
         { to: "/dashboard/manager/create-club", label: "Create Club" },
-        { to: "/dashboard", label: "Dashboard" }
+        { to: "/dashboard/manager", label: "Dashboard" }
       ] : role === "admin" ? [
         { to: "/dashboard/admin/status", label: "Manage Status" },
-        { to: "/dashboard", label: "Dashboard" }
+        { to: "/dashboard/admin", label: "Dashboard" }
       ] : [
         { to: "/about", label: "About us" },
         { to: "/contact", label: "Contact us" }
@@ -128,7 +128,11 @@ const Header = () => {
                         </div>
                         
                         <DropdownItem to="/profile" icon={<FaUser />} label="My Profile" onClick={() => setProfileDropdownOpen(false)} />
-                        <DropdownItem to="/dashboard" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />
+                        {
+                          role === "admin" ? (<DropdownItem to="/dashboard/admin" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />) : role === "clubManager" ? (<DropdownItem to="/dashboard/manager" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />): ( (<DropdownItem to="/dashboard/member" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />)
+                        )
+                        }
+                        
                         <DropdownItem to="/dashboard/member/clubs" icon={<CgLayoutPin/>} label="My Clubs" onClick={() => setProfileDropdownOpen(false)} />
                         
                         <div className="mt-2 pt-2 border-t border-gray-100 px-2">
@@ -196,7 +200,10 @@ const Header = () => {
                     </div>
                     <div>
                       <DropdownItem to="/profile" icon={<FaUser />} label="My Profile" onClick={() => setProfileDropdownOpen(false)} />
-                        <DropdownItem to="/dashboard" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />
+                        {
+                          role === "admin" ? (<DropdownItem to="/dashboard/admin" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />) : role === "clubManager" ? (<DropdownItem to="/dashboard/manager" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />): ( (<DropdownItem to="/dashboard/member" icon={<LucideLayoutDashboard />} label="Dashboard" onClick={() => setProfileDropdownOpen(false)} />)
+                        )
+                        }
                         <DropdownItem to="/dashboard/member/clubs" icon={<CgLayoutPin/>} label="My Clubs" onClick={() => setProfileDropdownOpen(false)} />
                     </div>
                   </div>

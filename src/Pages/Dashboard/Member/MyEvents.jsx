@@ -10,7 +10,7 @@ const MyEvents = () => {
   const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState("upcoming");
 
-  console.log(user);
+  //console.log(user);
   
   const { data: events = [], isLoading } = useQuery({
     queryKey: ["myEvents", user?.email],
@@ -36,6 +36,8 @@ const MyEvents = () => {
       </div>
     );
   }
+//console.log(events);
+console.log(displayedEvents);
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8 min-h-screen">
@@ -78,7 +80,7 @@ const MyEvents = () => {
         >
           {displayedEvents.length > 0 ? (
             displayedEvents.map((event) => (
-              <div key={event._id} className="group relative bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden flex flex-col md:flex-row">
+              <div key={event.id} className="group relative bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden flex flex-col md:flex-row">
                 {/* Left Side: Date Banner */}
                 <div className={`w-full md:w-32 flex flex-col items-center justify-center p-6 text-white transition-colors ${
                   activeTab === "upcoming" ? "bg-gradient-to-br from-blue-600 to-indigo-700" : "bg-slate-400"

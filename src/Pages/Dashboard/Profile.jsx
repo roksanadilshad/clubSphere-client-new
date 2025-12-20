@@ -128,7 +128,7 @@ const Profile = () => {
           </div>
 
           {/* Quick Stats Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
               <FaUsers className="text-primary mb-2" size={20} />
               <p className="text-2xl font-black text-slate-900">{currentUser.clubsCount}</p>
@@ -139,7 +139,7 @@ const Profile = () => {
               <p className="text-2xl font-black text-slate-900">{currentUser.eventsCount}</p>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Events</p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Right Column: Edit Profile */}
@@ -170,7 +170,7 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-
+{/* 
               <div className="p-6 bg-slate-50 rounded-2xl flex items-center gap-4">
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
                   <FaWallet size={20} />
@@ -179,7 +179,7 @@ const Profile = () => {
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-tight">Total Community Investment</p>
                   <p className="text-lg font-black text-slate-900">${currentUser.totalSpent.toLocaleString()}</p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex justify-end pt-4">
                 <button

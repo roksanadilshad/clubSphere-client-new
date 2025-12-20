@@ -35,7 +35,7 @@ const DashboardLayout = () => {
                     </div>
                     
                     <div className="flex-1 flex items-center gap-3 ml-2 lg:ml-0">
-                        <span className="text-slate-300 hidden md:block"><AnimLogo/></span>
+                        <span className="text-slate-300 lg:hidden md:block"><AnimLogo/></span>
                         <ChevronRight className="w-4 h-4 text-slate-300 hidden md:block" />
                         <h2 className="font-bold text-slate-800 tracking-tight">
                             {getPathTitle()}
