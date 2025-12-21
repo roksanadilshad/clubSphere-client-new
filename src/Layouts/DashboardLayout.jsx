@@ -15,7 +15,7 @@ import { AuthContext } from '../Context/AuthContext';
 const DashboardLayout = () => {
     const { role } = useRole();
     const location = useLocation();
-    const {user, signOutUser} = use(AuthContext);
+    const { signOutUser} = use(AuthContext);
 
     // Utility to get a readable title based on path
     const getPathTitle = () => {
