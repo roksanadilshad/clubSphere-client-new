@@ -12,7 +12,7 @@ const PaymentHistory = () => {
   const { data: payments = [], isLoading } = useQuery({
   queryKey: ["paymentHistory", user?.email, typeFilter],
   // STRICT CHECK: only run if user email AND the token exists in storage
-  enabled: !!user?.email && !!localStorage.getItem('access-token'), 
+  enabled: !!user?.email && !!localStorage.getItem('accessToken'), 
   queryFn: async () => {
     const response = await axiosSecure.get(
       `/payments?email=${user?.email}&type=${typeFilter}`
@@ -34,7 +34,7 @@ const PaymentHistory = () => {
       </div>
     );
   }
-  //console.log(totalSpent);
+  console.log(totalSpent);
   
 
   return (
